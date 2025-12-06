@@ -7,6 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+      </profile>
+      <profile name="Annotation profile for gold-wallet-app-backend" enabled="true">
+        <sourceOutputDir name="gold-wallet-app-backend/src/target/generated-sources/annotations" />
+        <sourceTestOutputDir name="gold-wallet-app-backend/src/target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
         <module name="gold-wallet-app-backend" />
       </profile>
     </annotationProcessing>
