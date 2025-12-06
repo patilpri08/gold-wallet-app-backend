@@ -2,7 +2,6 @@ package com.goldrental.service;
 
 import com.goldrental.entity.Rental;
 import com.goldrental.repository.*;
-import com.goldrental.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

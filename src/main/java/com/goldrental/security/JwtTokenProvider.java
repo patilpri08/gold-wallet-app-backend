@@ -3,7 +3,6 @@ package com.goldrental.security;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
@@ -11,19 +10,8 @@ public class JwtTokenProvider {
     @Value("${app.jwt.secret}")
     private String secretKey;
 
-    @Value("${app.jwt.expiration-ms}")
+    @Value("${app.jwt.expirationMs}")
     private long jwtExpirationMs;
-
-    // Generate Token
-    public String generateToken(String username, Long userId) {
-        return Jwts.builder()
-                .setSubject(username)
-                .claim("userId", userId)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
-    }
 
     // Get username from token
     public String getUsernameFromJWT(String token) {

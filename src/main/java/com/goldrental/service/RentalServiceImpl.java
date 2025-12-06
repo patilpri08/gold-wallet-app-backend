@@ -8,7 +8,6 @@ import com.goldrental.entity.Wallet;
 import com.goldrental.repository.JewelleryRepository;
 import com.goldrental.repository.RentalRepository;
 import com.goldrental.repository.WalletRepository;
-import com.goldrental.service.RentalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

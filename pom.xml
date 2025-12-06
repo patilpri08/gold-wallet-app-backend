@@ -96,7 +96,7 @@
     <build>
         <resources>
             <resource>
-                <directory>src/src/main/resources</directory>
+                <directory>gold-wallet-app-backend/src1/src/main/resources</directory>
             </resource>
         </resources>
 
@@ -106,7 +106,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.4.5</version>
                 <configuration>
-                    <mainClass>src.com.goldrental.GoldRentalApplication</mainClass>
+                    <mainClass>com.goldrental.GoldRentalApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
