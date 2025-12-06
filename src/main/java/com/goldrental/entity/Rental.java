@@ -7,41 +7,39 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "rentals")
+@Getter
+@Setter
 public class Rental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;   // ✅ primary key only
 
-    // ✅ Link to User (customer)
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)  // ✅ not "id"
     private User customer;
 
-    // ✅ Link to JewelleryItem
     @ManyToOne
-    @JoinColumn(name = "jewellery_id", nullable = false)
+    @JoinColumn(name = "jewellery_id", nullable = false) // ✅ not "id"
     private JewelleryItem jewellery;
 
+    private Long jewellerId;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String rentalStatus;
     private BigDecimal totalRent;
 
-    private LocalDate startDate;
-
-    private LocalDate endDate;
-
-    private String rentalStatus;
-
-    private Long userId;
-
-    public Long getJewelleryId() {
-        return jewellery.getId();
+    public void setUserId(Long customerId) {
+        customer.setId(customerId);
     }
 
     public Long getCustomerId() {
         return customer.getId();
+    }
+
+    public Long getJewelleryId() {
+        return jewellery.getId();
     }
 }

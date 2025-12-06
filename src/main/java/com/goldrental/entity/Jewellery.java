@@ -16,9 +16,6 @@ public class Jewellery {
     private double weight;
     private String gold_purity; // AVAILABLE, RENTED, MAINTENANCE
 
-    @ManyToOne
-    @JoinColumn(name = "jeweller_id")
-    private Jeweller jeweller;
 
     // getters and setters
 }
