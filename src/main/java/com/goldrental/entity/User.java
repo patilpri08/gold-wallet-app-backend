@@ -20,10 +20,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Rentals linked to this user
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Rental> rentals;
-
     private String name;
 
     @Column(unique = true, nullable = false)

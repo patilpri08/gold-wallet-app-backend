@@ -55,7 +55,7 @@ public class RentalServiceImpl implements RentalService {
         walletRepository.save(wallet);
 
         Rental rental = new Rental();
-        rental.setUserId(request.getCustomerId());   // ✅ link to user
+        rental.setUser_id(request.getCustomerId());   // ✅ link to user
         rental.setId(item.getId());             // ✅ link to jewellery
         rental.setStartDate(start);
         rental.setEndDate(end);
@@ -83,21 +83,26 @@ public class RentalServiceImpl implements RentalService {
     }
 
     @Override
-    public List<RentalDto> getUserRentals(Long userId) {
-        return rentalRepository.findByUserId(userId)
-                .stream()
-                .map(r -> mapToDto(
-                        r,
-                        jewelleryRepository.findById(r.getJewelleryId())
-                                .orElseThrow(() -> new RuntimeException("Jewellery item not found"))
-                ))
-                .collect(Collectors.toList());
+    public List<RentalDto> getUserRentals(Long user_id) {
+        return List.of();
     }
+
+//    @Override
+//    public List<RentalDto> getUserRentals(Long user_id) {
+//        return rentalRepository.findByUserId(user_id)
+//                .stream()
+//                .map(r -> mapToDto(
+//                        r,
+//                        jewelleryRepository.findById(r.getJewelleryId())
+//                                .orElseThrow(() -> new RuntimeException("Jewellery item not found"))
+//                ))
+//                .collect(Collectors.toList());
+//    }
 
     private RentalDto mapToDto(Rental rental, JewelleryItem item) {
         RentalDto dto = new RentalDto();
         dto.setId(rental.getId());
-        dto.setUserId(rental.getCustomerId());          // ✅ correct userId
+        dto.setUser_id(rental.getUser_id());          // ✅ correct userId
         dto.setJewelleryId(rental.getJewelleryId());
         dto.setStartDate(rental.getStartDate());
         dto.setEndDate(rental.getEndDate());

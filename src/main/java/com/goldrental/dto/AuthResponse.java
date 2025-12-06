@@ -13,7 +13,7 @@ public class AuthResponse {
 
     private String token;    // JWT token
     private String tokenType = "Bearer";
-    private Long userId;
+    private Long user_id;
     private String name;
     private String email;
     private String role;
@@ -21,9 +21,9 @@ public class AuthResponse {
 
     public AuthResponse(Object id, Object fullName, String token) {}
 
-    public AuthResponse(String token, Long userId, String name, String email) {
+    public AuthResponse(String token, Long user_id, String name, String email) {
         this.token = token;
-        this.userId = userId;
+        this.user_id = user_id;
         this.name = name;
         this.email = email;
     }

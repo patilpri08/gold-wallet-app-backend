@@ -40,6 +40,4 @@ public class JewelleryItem {
         this.jeweller = jeweller;
     }
 
-    // --- Getters and Setters ---
-
 }

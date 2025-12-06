@@ -17,9 +17,7 @@ public class Rental {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;   // ✅ primary key only
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)  // ✅ not "id"
-    private User customer;
+    private Long user_id;
 
     @ManyToOne
     @JoinColumn(name = "jewellery_id", nullable = false) // ✅ not "id"
@@ -30,14 +28,6 @@ public class Rental {
     private LocalDate endDate;
     private String rentalStatus;
     private BigDecimal totalRent;
-
-    public void setUserId(Long customerId) {
-        customer.setId(customerId);
-    }
-
-    public Long getCustomerId() {
-        return customer.getId();
-    }
 
     public Long getJewelleryId() {
         return jewellery.getId();

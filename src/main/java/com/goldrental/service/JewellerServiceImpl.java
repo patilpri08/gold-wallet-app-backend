@@ -43,13 +43,13 @@ public class JewellerServiceImpl implements JewellerService {
     }
 
     @Override
-    public Object getInventory(Long jewellerId) {
-        return jewelleryRepository.findByJewelleryId(jewellerId);
+    public Object getInventory(Long id) {
+        return jewelleryRepository.findById(id);
     }
 
     @Override
-    public Object addInventoryItem(Long jewellerId, InventoryRequest request) {
-        Jeweller jeweller = jewellerRepository.findById(jewellerId)
+    public Object addInventoryItem(Long id, InventoryRequest request) {
+        Jeweller jeweller = jewellerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Jeweller not found"));
 
 

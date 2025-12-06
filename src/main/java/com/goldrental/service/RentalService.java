@@ -11,5 +11,5 @@ public interface RentalService {
 
     RentalDto returnJewellery(Long rentalId);
 
-    List<RentalDto> getUserRentals(Long userId);
+    List<RentalDto> getUserRentals(Long user_id);
 }

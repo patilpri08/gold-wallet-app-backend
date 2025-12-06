@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 public class RentalDto {
     private Long id;
-    private Long userId;
+    private Long user_id;
     private Long jewellerId;
     private Long jewelleryId;
     private LocalDate startDate;

@@ -4,11 +4,12 @@ import com.goldrental.entity.JewelleryItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface JewelleryRepository extends JpaRepository<JewelleryItem, Long> {
 
-    List<JewelleryItem> findByJewellerId(Long jewellerId);
+    List<JewelleryItem> findByJewellerId(Long id);
 
-    List<JewelleryItem> findByJewelleryId(Long jewelleryId);
+    Optional<JewelleryItem> findById(Long id);
 
 }
