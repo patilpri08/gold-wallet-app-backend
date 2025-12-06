@@ -16,17 +16,10 @@ public class Jeweller {
 
     private String name;
 
-    private String email;
-
-    // <-- Getter
-    private boolean verified; // <-- Add this field
-
     public Jeweller() {}
 
-    public Jeweller(String name, String email, boolean verified) {
+    public Jeweller(String name) {
         this.name = name;
-        this.email = email;
-        this.verified = verified;
     }
 
 }

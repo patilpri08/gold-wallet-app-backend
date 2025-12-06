@@ -15,20 +15,20 @@ public class JewellerServiceImpl implements JewellerService {
     private final JewellerRepository jewellerRepository;
     private final JewelleryRepository jewelleryRepository;
 
-    @Override
-    public Jeweller registerJeweller(Jeweller jeweller) {
-        jeweller.setVerified(false);
-        return jewellerRepository.save(jeweller);
-    }
+//    @Override
+//    public Jeweller registerJeweller(Jeweller jeweller) {
+//        jeweller.setVerified(false);
+//        return jewellerRepository.save(jeweller);
+//    }
 
-    @Override
-    public Jeweller verifyJeweller(Long id) {
-        Jeweller jeweller = jewellerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Jeweller not found"));
-
-        jeweller.setVerified(true);
-        return jewellerRepository.save(jeweller);
-    }
+//    @Override
+//    public Jeweller verifyJeweller(Long id) {
+//        Jeweller jeweller = jewellerRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Jeweller not found"));
+//
+//        jeweller.setVerified(true);
+//        return jewellerRepository.save(jeweller);
+//    }
 
     @Override
     public Object getAllJewellers() {

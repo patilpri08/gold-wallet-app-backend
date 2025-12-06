@@ -18,16 +18,11 @@ public class Rental {
 
     @ManyToOne
     @JoinColumn(name = "jewellery_id")
-    private Jewellery jewellery;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Jewellery jewellery_id;
     
     private BigDecimal total_rent;
     private Long jeweller_id;
-    private Long jewellery_id;
-    private LocalDate rentalStartDate;
-    private LocalDate rentalEndDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String rentalStatus;
 }

@@ -1,5 +1,7 @@
 package com.goldrental.dto;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,4 +24,5 @@ public class RentalDto {
 
     private BigDecimal totalAmount;
     private String status;   // ACTIVE | RETURNED | OVERDUE
+
 }

@@ -66,8 +66,8 @@ public class RentalServiceImpl implements RentalService {
         rental.setId(request.getJewelleryId());
         rental.setJewellery_id(item.getJeweller().getId());
         rental.setJeweller_id(item.getId());
-        rental.setRentalStartDate(LocalDate.now());
-        rental.setRentalEndDate(LocalDate.now().plusDays(request.getDays()));
+        rental.setStartDate(LocalDate.now());
+        rental.setEndDate(LocalDate.now().plusDays(request.getDays()));
         rental.setTotal_rent(rentalAmount);
         rental.setRentalStatus("ACTIVE");
 

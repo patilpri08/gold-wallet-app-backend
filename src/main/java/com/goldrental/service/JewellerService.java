@@ -5,9 +5,9 @@ import com.goldrental.entity.Jeweller;
 
 public interface JewellerService {
 
-    Jeweller registerJeweller(Jeweller jeweller);
+//    Jeweller registerJeweller(Jeweller jeweller);
 
-    Jeweller verifyJeweller(Long id);
+//    Jeweller verifyJeweller(Long id);
 
     Object getAllJewellers();
 
