@@ -12,7 +12,7 @@ public class Jewellery {
 
     private String jeweller_id;
     private String name; // ring, necklace, etc.
-    private BigDecimal dailyRentalRate;
+    private BigDecimal dailyrent;
     private double weight;
     private String gold_purity; // AVAILABLE, RENTED, MAINTENANCE
 

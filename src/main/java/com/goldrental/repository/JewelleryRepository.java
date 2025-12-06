@@ -8,4 +8,7 @@ import java.util.List;
 public interface JewelleryRepository extends JpaRepository<JewelleryItem, Long> {
 
     List<JewelleryItem> findByJewellerId(Long jewellerId);
+
+    List<JewelleryItem> findByJewelleryId(Long jewelleryId);
+
 }

@@ -37,7 +37,6 @@ public class RentalServiceImpl implements RentalService {
             throw new RuntimeException("Wallet not found for user");
         }
 
-        // Safe BigDecimal usage
         BigDecimal rate = item.getDailyRentalRate() != null
                 ? item.getDailyRentalRate()
                 : BigDecimal.ZERO;
@@ -45,30 +44,22 @@ public class RentalServiceImpl implements RentalService {
         LocalDate start = request.getRentalStartDate();
         LocalDate end = request.getRentalEndDate();
 
-        // Calculate difference in days
         long diffDays = ChronoUnit.DAYS.between(start, end);
+        BigDecimal rentalAmount = rate.multiply(BigDecimal.valueOf(diffDays));
 
-        // Convert to BigDecimal
-        BigDecimal days = BigDecimal.valueOf(diffDays);
-
-        BigDecimal rentalAmount = rate.multiply(days);
-
-        // Correct BigDecimal comparison: < 0 means insufficient balance
         if (wallet.getBalance().compareTo(rentalAmount) < 0) {
             throw new RuntimeException("Insufficient wallet balance");
         }
 
-        // Deduct / Block the rental amount
         wallet.setBalance(wallet.getBalance().subtract(rentalAmount));
         walletRepository.save(wallet);
 
         Rental rental = new Rental();
-        rental.setId(request.getJewelleryId());
-        rental.setJewellery_id(item.getJeweller().getId());
-        rental.setJeweller_id(item.getId());
-        rental.setStartDate(LocalDate.now());
-        rental.setEndDate(LocalDate.now().plusDays(request.getDays()));
-        rental.setTotal_rent(rentalAmount);
+        rental.setUserId(request.getCustomerId());   // ✅ link to user
+        rental.setId(item.getId());             // ✅ link to jewellery
+        rental.setStartDate(start);
+        rental.setEndDate(end);
+        rental.setTotalRent(rentalAmount);
         rental.setRentalStatus("ACTIVE");
 
         rentalRepository.save(rental);
@@ -78,7 +69,6 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public RentalDto returnJewellery(Long rentalId) {
-
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new RuntimeException("Rental Id not found"));
 
@@ -86,7 +76,7 @@ public class RentalServiceImpl implements RentalService {
         rentalRepository.save(rental);
 
         JewelleryItem item = jewelleryRepository
-                .findById(rental.getJewellery_id())
+                .findById(rental.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
         return mapToDto(rental, item);
@@ -98,27 +88,21 @@ public class RentalServiceImpl implements RentalService {
                 .stream()
                 .map(r -> mapToDto(
                         r,
-                        jewelleryRepository.findById(r.getJewellery_id())
+                        jewelleryRepository.findById(r.getJewelleryId())
                                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"))
                 ))
                 .collect(Collectors.toList());
-
     }
 
     private RentalDto mapToDto(Rental rental, JewelleryItem item) {
         RentalDto dto = new RentalDto();
-        dto.setRentalId(rental.getId());
-        dto.setUserId(rental.getId());
-        dto.setJewellerId(rental.getJeweller_id());
-        dto.setInventoryItemId(rental.getJewellery_id());
-        dto.setItemName(item.getName());
-        dto.setItemType(item.getType());
-        dto.setWeight(item.getWeight());
-        dto.setDailyRentalRate(item.getDailyRentalRate());
-        dto.setStartDate(rental.getRentalStartDate());
-        dto.setEndDate(rental.getRentalEndDate());
-        dto.setTotalAmount(rental.getTotal_rent());
-        dto.setStatus(rental.getRentalStatus());
+        dto.setId(rental.getId());
+        dto.setUserId(rental.getCustomerId());          // ✅ correct userId
+        dto.setJewelleryId(rental.getJewelleryId());
+        dto.setStartDate(rental.getStartDate());
+        dto.setEndDate(rental.getEndDate());
+        dto.setRentalStatus(rental.getTotalRent());
+        dto.setTotalRent(rental.getRentalStatus());
         return dto;
     }
 }

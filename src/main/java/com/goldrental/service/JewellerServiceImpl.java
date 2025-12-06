@@ -44,7 +44,7 @@ public class JewellerServiceImpl implements JewellerService {
 
     @Override
     public Object getInventory(Long jewellerId) {
-        return jewelleryRepository.findByJewellerId(jewellerId);
+        return jewelleryRepository.findByJewelleryId(jewellerId);
     }
 
     @Override

@@ -13,16 +13,35 @@ import java.time.LocalDate;
 @Table(name = "rentals")
 public class Rental {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ✅ Link to User (customer)
     @ManyToOne
-    @JoinColumn(name = "jewellery_id")
-    private Jewellery jewellery_id;
-    
-    private BigDecimal total_rent;
-    private Long jeweller_id;
+    @JoinColumn(name = "id", nullable = false)
+    private User customer;
+
+    // ✅ Link to JewelleryItem
+    @ManyToOne
+    @JoinColumn(name = "jewellery_id", nullable = false)
+    private JewelleryItem jewellery;
+
+    private BigDecimal totalRent;
+
     private LocalDate startDate;
+
     private LocalDate endDate;
+
     private String rentalStatus;
+
+    private Long userId;
+
+    public Long getJewelleryId() {
+        return jewellery.getId();
+    }
+
+    public Long getCustomerId() {
+        return customer.getId();
+    }
 }

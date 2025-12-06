@@ -33,7 +33,7 @@ public class DashboardServiceImpl implements DashboardService {
         Map<String, Object> map = new HashMap<>();
         map.put("rentalRevenue",
                 rentalRepository.findAll().stream()
-                        .map(Rental::getTotal_rent)
+                        .map(Rental::getTotalRent)
                         .reduce(BigDecimal.ZERO, BigDecimal::add)
         );
 

@@ -9,20 +9,13 @@ import java.time.LocalDate;
 
 @Data
 public class RentalDto {
-    private Long rentalId;
+    private Long id;
     private Long userId;
     private Long jewellerId;
-    private Long inventoryItemId;
-
-    private String itemName;
-    private String itemType;
-    private double weight;
-    private BigDecimal dailyRentalRate;
-
+    private Long jewelleryId;
     private LocalDate startDate;
     private LocalDate endDate;
-
-    private BigDecimal totalAmount;
-    private String status;   // ACTIVE | RETURNED | OVERDUE
+    private BigDecimal rentalStatus;
+    private String totalRent;   // ACTIVE | RETURNED | OVERDUE
 
 }
