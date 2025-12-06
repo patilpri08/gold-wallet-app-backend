@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.goldrental</groupId>
-    <artifactId>gold-rental-backend</artifactId>
+    <artifactId>gold-wallet-app-backend</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
