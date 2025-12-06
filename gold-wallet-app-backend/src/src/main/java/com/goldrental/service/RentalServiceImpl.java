@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +30,10 @@ public class RentalServiceImpl implements RentalService {
     public RentalDto rentJewellery(RentalRequest request) {
 
         JewelleryItem item = jewelleryRepository
-                .findById(request.getItemId())
+                .findById(request.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
-        Wallet wallet = walletRepository.findByUserId(request.getUserId());
+        Wallet wallet = walletRepository.findByUserId(request.getCustomerId());
         if (wallet == null) {
             throw new RuntimeException("Wallet not found for user");
         }
@@ -42,7 +43,15 @@ public class RentalServiceImpl implements RentalService {
                 ? item.getDailyRentalRate()
                 : BigDecimal.ZERO;
 
-        BigDecimal days = BigDecimal.valueOf(request.getDays());
+        LocalDate start = request.getRentalStartDate();
+        LocalDate end = request.getRentalEndDate();
+
+        // Calculate difference in days
+        long diffDays = ChronoUnit.DAYS.between(start, end);
+
+        // Convert to BigDecimal
+        BigDecimal days = BigDecimal.valueOf(diffDays);
+
         BigDecimal rentalAmount = rate.multiply(days);
 
         // Correct BigDecimal comparison: < 0 means insufficient balance
@@ -55,7 +64,7 @@ public class RentalServiceImpl implements RentalService {
         walletRepository.save(wallet);
 
         Rental rental = new Rental();
-        rental.setId(request.getUserId());
+        rental.setId(request.getJewelleryId());
         rental.setJewellery_id(item.getJeweller().getId());
         rental.setJeweller_id(item.getId());
         rental.setRentalStartDate(LocalDate.now());

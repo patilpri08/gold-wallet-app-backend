@@ -55,7 +55,7 @@ public class JewellerServiceImpl implements JewellerService {
 
         JewelleryItem item = new JewelleryItem();
         item.setJeweller(jeweller);
-        item.setName(request);
+        item.setName(request.getName());
         item.setType(request.getType());
         item.setWeight(request.getWeight());
         item.setDailyRentalRate(request.getDailyRentalRate());
