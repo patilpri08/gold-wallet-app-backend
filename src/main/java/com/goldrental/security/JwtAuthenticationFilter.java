@@ -20,14 +20,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider tokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
 
-    // ✅ Constructor injection (preferred)
     public JwtAuthenticationFilter(JwtTokenProvider tokenProvider,
                                    CustomUserDetailsService customUserDetailsService) {
         this.tokenProvider = tokenProvider;
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    // Extract token from "Authorization" header
     private String getJWTFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
@@ -43,6 +41,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
+            String path = request.getServletPath();
+
+            // ✅ Skip JWT validation for public endpoints
+            if (path.startsWith("/api/auth/register") || path.startsWith("/login") || path.startsWith("/api/auth")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             String token = getJWTFromRequest(request);
 
             if (token != null && tokenProvider.validateToken(token)) {
@@ -63,7 +69,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception ex) {
-            // ✅ Use logging instead of System.out
             logger.error("Could not set user authentication", ex);
         }
 
