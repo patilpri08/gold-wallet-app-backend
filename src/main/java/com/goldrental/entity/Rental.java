@@ -17,7 +17,8 @@ public class Rental {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;   // ✅ primary key only
 
-    private Long user_id;
+    @ManyToOne
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "jewellery_id", nullable = false) // ✅ not "id"
@@ -31,5 +32,13 @@ public class Rental {
 
     public Long getJewelleryId() {
         return jewellery.getId();
+    }
+
+    public void setUser_id(Long customerId) {
+        this.user.setId(customerId);
+    }
+
+    public Long getUser_id() {
+        return user.getId();
     }
 }

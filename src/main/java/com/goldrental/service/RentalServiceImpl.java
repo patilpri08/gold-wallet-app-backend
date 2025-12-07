@@ -5,7 +5,8 @@ import com.goldrental.dto.RentalRequest;
 import com.goldrental.entity.JewelleryItem;
 import com.goldrental.entity.Rental;
 import com.goldrental.entity.Wallet;
-import com.goldrental.repository.JewelleryRepository;
+import com.goldrental.exception.JewelleryNotFoundException;
+import com.goldrental.repository.JewelleryItemRepository;
 import com.goldrental.repository.RentalRepository;
 import com.goldrental.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RentalServiceImpl implements RentalService {
 
-    private final JewelleryRepository jewelleryRepository;
+    private final JewelleryItemRepository jewelleryItemRepository;
     private final RentalRepository rentalRepository;
     private final WalletRepository walletRepository;
 
     @Override
     public RentalDto rentJewellery(RentalRequest request) {
 
-        JewelleryItem item = jewelleryRepository
+        JewelleryItem item = jewelleryItemRepository
                 .findById(request.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
@@ -75,7 +76,7 @@ public class RentalServiceImpl implements RentalService {
         rental.setRentalStatus("RETURNED");
         rentalRepository.save(rental);
 
-        JewelleryItem item = jewelleryRepository
+        JewelleryItem item = jewelleryItemRepository
                 .findById(rental.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
@@ -84,20 +85,15 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public List<RentalDto> getUserRentals(Long user_id) {
-        return List.of();
+        return rentalRepository.findByUser_Id(user_id)
+                .stream()
+                .map(r -> mapToDto(
+                        r,
+                        jewelleryItemRepository.findById(r.getJewelleryId())
+                                .orElseThrow(() -> new JewelleryNotFoundException(r.getJewelleryId()))
+                ))
+                .collect(Collectors.toList());
     }
-
-//    @Override
-//    public List<RentalDto> getUserRentals(Long user_id) {
-//        return rentalRepository.findByUserId(user_id)
-//                .stream()
-//                .map(r -> mapToDto(
-//                        r,
-//                        jewelleryRepository.findById(r.getJewelleryId())
-//                                .orElseThrow(() -> new RuntimeException("Jewellery item not found"))
-//                ))
-//                .collect(Collectors.toList());
-//    }
 
     private RentalDto mapToDto(Rental rental, JewelleryItem item) {
         RentalDto dto = new RentalDto();

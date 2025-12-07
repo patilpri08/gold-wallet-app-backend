@@ -17,4 +17,11 @@ public class GlobalExceptionHandler {
         error.put("error", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+
+
+    @ExceptionHandler(JewelleryNotFoundException.class)
+    public ResponseEntity<String> handleJewelleryNotFound(JewelleryNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
 }

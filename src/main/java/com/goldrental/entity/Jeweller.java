@@ -15,7 +15,7 @@ public class Jeweller {
     private Long id;
 
     private String name;
-
+    private boolean verified;
     public Jeweller() {}
 
     public Jeweller(String name) {
