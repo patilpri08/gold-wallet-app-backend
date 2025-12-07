@@ -20,7 +20,7 @@ public class JwtUtils {
 
     // ✅ Constructor: decode Base64 secret into a proper SecretKey
     public JwtUtils(@Value("${app.jwt.secret}") String secretKey) {
-        System.out.println("++++++++++++++++++++++++++++++++");
+
         byte[] keyBytes = Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded();
         String base64Key = Base64.getEncoder().encodeToString(keyBytes);
         System.out.println(base64Key);
@@ -33,7 +33,8 @@ public class JwtUtils {
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
-                .setSubject(user.getName()) // or user.getEmail()
+                .setSubject(user.getEmail()) // or user.getEmail()
+                .claim("role", user.getRole()) // ✅ add role claim
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
@@ -62,4 +63,14 @@ public class JwtUtils {
                 .getBody()
                 .getSubject();
     }
+
+    public String getRoleFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
+    }
+
 }

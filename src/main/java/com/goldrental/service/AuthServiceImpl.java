@@ -4,13 +4,17 @@ import com.goldrental.dto.AuthRequest;
 import com.goldrental.dto.RegisterRequest;
 import com.goldrental.dto.AuthResponse;
 import com.goldrental.entity.User;
+import com.goldrental.entity.Wallet;
 import com.goldrental.repository.UserRepository;
+import com.goldrental.repository.WalletRepository;
 import com.goldrental.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    private final WalletRepository walletRepository;
 
     @Override
     public AuthResponse login(AuthRequest request) {
@@ -39,13 +44,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(RegisterRequest request) {
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        User savedUser = new User();
+        savedUser.setName(request.getName());
+        savedUser.setEmail(request.getEmail());
+        savedUser.setPhone(request.getPhone());
+        savedUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        savedUser.setRole(request.getRole());
 
-        userRepository.save(user);
+        userRepository.save(savedUser);
+
+        // Create wallet for the new savedUser
+        Wallet wallet = new Wallet();
+        wallet.setUser(savedUser);
+        wallet.setBalance(BigDecimal.ZERO); // start with 0 balance
+        walletRepository.save(wallet);
+
     }
 
     @Override

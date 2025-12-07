@@ -2,6 +2,7 @@ package com.goldrental.service;
 
 import java.math.BigDecimal;
 
+import com.goldrental.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import com.goldrental.dto.WalletRequest;
 import com.goldrental.repository.WalletRepository;
@@ -18,13 +19,19 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public WalletDto getWallet(Long userId) {
-        Wallet wallet = walletRepository.findByUserId(userId);
+        System.out.println("+++++++++++++++++++++++++++++"+userId);
+        Wallet wallet = walletRepository.findByUser_Id(userId);
+        System.out.println("+++++++++++++++++++++++++++++"+wallet.getId());
+        if (wallet == null) {
+            throw new ResourceNotFoundException("Wallet not found for userId: " + userId);
+        }
+
         return mapToDto(wallet);
     }
 
     @Override
     public WalletDto addMoney(WalletRequest request) {
-        Wallet wallet = walletRepository.findByUserId(request.getUserId());
+        Wallet wallet = walletRepository.findByUser_Id(request.getUserId());
         wallet.setBalance(wallet.getBalance().add(request.getAmount()));
         walletRepository.save(wallet);
         return mapToDto(wallet);
@@ -32,7 +39,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public WalletDto withdrawAmount(WalletRequest request) {
-        Wallet wallet = walletRepository.findByUserId(request.getUserId());
+        Wallet wallet = walletRepository.findByUser_Id(request.getUserId());
 
         BigDecimal amount = request.getAmount();
 
@@ -52,6 +59,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     private WalletDto mapToDto(Wallet wallet) {
+        System.out.println("55=====");
         WalletDto dto = new WalletDto();
         dto.setUserId(wallet.getUserId());
         dto.setBalance(wallet.getBalance());

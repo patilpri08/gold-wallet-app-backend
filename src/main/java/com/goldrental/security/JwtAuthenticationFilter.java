@@ -1,37 +1,27 @@
 package com.goldrental.security;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
+import java.util.Collections;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider tokenProvider;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtUtils jwtUtils;
 
-    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider,
-                                   CustomUserDetailsService customUserDetailsService) {
-        this.tokenProvider = tokenProvider;
-        this.customUserDetailsService = customUserDetailsService;
-    }
-
-    private String getJWTFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+    public JwtAuthenticationFilter(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
     }
 
     @Override
@@ -40,36 +30,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        try {
-            String path = request.getServletPath();
+        String header = request.getHeader("Authorization");
+        String token = null;
 
-            // ✅ Skip JWT validation for public endpoints
-            if (path.startsWith("/api/auth")) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+        if (header != null && header.startsWith("Bearer ")) {
+            token = header.substring(7);
+        }
 
-            String token = getJWTFromRequest(request);
+        if (token != null && jwtUtils.validateToken(token)) {
+            String username = jwtUtils.getUsernameFromToken(token);
+            String role = jwtUtils.getRoleFromToken(token); // ✅ extract role claim
 
-            if (token != null && tokenProvider.validateToken(token)) {
-                String username = tokenProvider.getUsernameFromJWT(token);
+            if (username != null && role != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                // Map role into Spring Security authority
+                SimpleGrantedAuthority authority =
+                        new SimpleGrantedAuthority("ROLE_" + role);
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
-                                userDetails,
+                                username,
                                 null,
-                                userDetails.getAuthorities()
+                                Collections.singletonList(authority)
                         );
 
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-
-        } catch (Exception ex) {
-            logger.error("Could not set user authentication", ex);
         }
 
         filterChain.doFilter(request, response);

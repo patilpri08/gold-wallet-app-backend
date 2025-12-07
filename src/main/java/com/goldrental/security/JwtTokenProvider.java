@@ -43,7 +43,7 @@ public class JwtTokenProvider {
 
     // Get username from token
     public String getUsernameFromJWT(String token) {
-        System.out.println("46=====");
+
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

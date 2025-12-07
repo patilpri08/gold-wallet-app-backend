@@ -53,7 +53,6 @@ public class SecurityConfig {
                         .hasAnyRole("JEWELLER", "ADMIN")
                         .requestMatchers("/api/wallet/**", "/api/rental/**")
                         .hasAnyRole("CUSTOMER", "ADMIN")
-
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

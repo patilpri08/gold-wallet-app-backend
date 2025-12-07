@@ -16,18 +16,18 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
-
     // <-- Needed
     private BigDecimal balance;  // <-- Important
 
-    public Wallet() {}
-
-    public Wallet(Long userId, BigDecimal balance) {
-        this.userId = userId;
-        this.balance = balance;
+    public Wallet() {
     }
 
-    // --- Getters and Setters ---
+    @OneToOne
+    @JoinColumn(name = "user_Id", referencedColumnName = "id")
+    private User user;
 
+    public Long getUserId() {
+        System.out.println("++++++++++++++++++++++++++++"+user.getId());
+        return user.getId();
+    }
 }

@@ -32,7 +32,7 @@ public class RentalServiceImpl implements RentalService {
                 .findById(request.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
-        Wallet wallet = walletRepository.findByUserId(request.getCustomerId());
+        Wallet wallet = walletRepository.findByUser_Id(request.getCustomerId());
         if (wallet == null) {
             throw new RuntimeException("Wallet not found for user");
         }

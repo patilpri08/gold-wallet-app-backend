@@ -30,10 +30,10 @@ public class User {
     @Column(unique = true)
     private String phone;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Wallet wallet;
 
-    // Convenience constructor
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
+    @Column(nullable = false)
+    private String role; // e.g. "ROLE_CUSTOMER", "ROLE_ADMIN", "ROLE_JEWELLER"
+
 }
