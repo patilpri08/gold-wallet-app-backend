@@ -32,10 +32,9 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Jeweller not found"));
-
         String token = jwtUtils.generateToken(user);
 
-        return new AuthResponse(user.getId(), user.getName(), token);
+        return new AuthResponse(user.getPhone(), user.getName(), user.getEmail(),token,user.getId());
     }
 
     @Override
