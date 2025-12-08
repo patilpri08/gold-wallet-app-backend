@@ -16,6 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import com.goldrental.security.JwtAuthenticationFilter;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.goldrental.security.JwtAuthenticationEntryPoint;
 
@@ -37,7 +38,7 @@ public class SecurityConfig {
                     "http://localhost:9090"
             ));
             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-            config.setAllowedHeaders(Arrays.asList("*"));
+            config.setAllowedHeaders(List.of("*"));
             config.setAllowCredentials(true);
             return config;
         }));
@@ -53,6 +54,8 @@ public class SecurityConfig {
                         .hasAnyRole("JEWELLER", "ADMIN")
                         .requestMatchers("/api/wallet/**", "/api/rental/**")
                         .hasAnyRole("CUSTOMER", "ADMIN")
+                        .requestMatchers("/api/jewellery-items/**")
+                        .hasAnyRole("JEWELLER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

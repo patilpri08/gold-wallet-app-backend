@@ -1,7 +1,6 @@
 package com.goldrental.controller;
 
-import com.goldrental.dto.InventoryRequest;
-import com.goldrental.entity.Jeweller;
+import com.goldrental.dto.JewelleryItemRequest;
 import com.goldrental.service.JewellerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,12 +35,12 @@ public class JewellerController {
     }
 
     @PostMapping("/{id}/inventory")
-    public ResponseEntity<?> addItem(@PathVariable Long id, @RequestBody InventoryRequest request) {
+    public ResponseEntity<?> addItem(@PathVariable Long id, @RequestBody JewelleryItemRequest request) {
         return ResponseEntity.ok(jewellerService.addInventoryItem(id, request));
     }
 
     @PutMapping("/inventory/{itemId}")
-    public ResponseEntity<?> updateItem(@PathVariable Long itemId, @RequestBody InventoryRequest request) {
+    public ResponseEntity<?> updateItem(@PathVariable Long itemId, @RequestBody JewelleryItemRequest request) {
         return ResponseEntity.ok(jewellerService.updateInventoryItem(itemId, request));
     }
 

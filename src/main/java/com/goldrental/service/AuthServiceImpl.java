@@ -28,18 +28,32 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(AuthRequest request) {
-        authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
+        User user;
+        String token;
+        try {
+            authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+
+            user = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new RuntimeException("Jeweller not found"));
+            token = jwtUtils.generateToken(user);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid login credentials", e);
+        }
+
+        return new AuthResponse(
+                user.getPhone(),
+                user.getName(),
+                user.getEmail(),
+                token,
+                user.getId(),
+                user.getRole()
         );
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Jeweller not found"));
-        String token = jwtUtils.generateToken(user);
-
-        return new AuthResponse(user.getPhone(), user.getName(), user.getEmail(),token,user.getId(), user.getRole());
     }
 
     @Override
@@ -58,7 +72,6 @@ public class AuthServiceImpl implements AuthService {
         wallet.setWalletUser(savedUser);
         wallet.setBalance(BigDecimal.ZERO); // start with 0 balance
         walletRepository.save(wallet);
-
     }
 
     @Override

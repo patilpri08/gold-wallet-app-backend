@@ -28,7 +28,7 @@ public class JewelleryItem {
     private String jewellery_condition;
 
     // New fields
-    private String availability;        // e.g. "AVAILABLE, RENTED, MAINTENANCE"
+    private Boolean availability;        // e.g. "AVAILABLE, RENTED, MAINTENANCE"
     private String jewelleryCategory;   // e.g. "rings"
     private String photos;              // URL or path to photos (nullable)
     private String purity;              // e.g. "24k"
@@ -42,7 +42,7 @@ public class JewelleryItem {
     // Extended constructor
     public JewelleryItem(String name, String type, BigDecimal price, BigDecimal dailyRentalRate,
                          double weight, String status, Jeweller jeweller,
-                         String availability, String jewellery_condition, String jewelleryCategory,
+                         Boolean availability, String jewellery_condition, String jewelleryCategory,
                          String photos, String purity, BigDecimal rentPerDay,
                          BigDecimal rentPerWeekMonth, BigDecimal replacementValue,
                          BigDecimal securityDeposit) {
@@ -52,7 +52,6 @@ public class JewelleryItem {
         this.dailyRentalRate = dailyRentalRate;
         this.weight = weight;
         this.jeweller = jeweller;
-
         this.availability = availability;
         this.jewellery_condition = jewellery_condition;
         this.jewelleryCategory = jewelleryCategory;

@@ -1,6 +1,6 @@
 package com.goldrental.service;
 
-import com.goldrental.dto.InventoryRequest;
+import com.goldrental.dto.JewelleryItemRequest;
 import com.goldrental.dto.RegisterJweller;
 import com.goldrental.entity.Jeweller;
 import com.goldrental.entity.JewelleryItem;
@@ -97,7 +97,7 @@ public class JewellerServiceImpl implements JewellerService {
     }
 
     @Override
-    public Object addInventoryItem(Long id, InventoryRequest request) {
+    public Object addInventoryItem(Long id, JewelleryItemRequest request) {
         Jeweller jeweller = jewellerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Jeweller not found"));
 
@@ -113,7 +113,7 @@ public class JewellerServiceImpl implements JewellerService {
     }
 
     @Override
-    public Object updateInventoryItem(Long itemId, InventoryRequest request) {
+    public Object updateInventoryItem(Long itemId, JewelleryItemRequest request) {
         JewelleryItem item = jewelleryItemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("Jeweller not found"));
 
         item.setName(request.getName());
