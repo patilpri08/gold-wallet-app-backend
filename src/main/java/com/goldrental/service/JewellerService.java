@@ -22,3 +22,4 @@ public interface JewellerService {
     void deleteInventoryItem(Long itemId);
 
 }
+
