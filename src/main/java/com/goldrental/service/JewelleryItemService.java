@@ -30,16 +30,31 @@ public class JewelleryItemService {
 
     public JewelleryItem updateItem(Long id, JewelleryItem updatedItem) {
         JewelleryItem existing = getItemById(id);
+
+        // Basic fields
         existing.setName(updatedItem.getName());
         existing.setType(updatedItem.getType());
         existing.setPrice(updatedItem.getPrice());
         existing.setDailyRentalRate(updatedItem.getDailyRentalRate());
         existing.setWeight(updatedItem.getWeight());
-        existing.setStatus(updatedItem.getStatus());
+
+        // Relationship
         existing.setJeweller(updatedItem.getJeweller());
+
+        // New fields
+        existing.setAvailability(updatedItem.getAvailability());
+        existing.setJewellery_condition(updatedItem.getJewellery_condition());
+        existing.setJewelleryCategory(updatedItem.getJewelleryCategory());
+        existing.setPhotos(updatedItem.getPhotos());
+        existing.setPurity(updatedItem.getPurity());
+
+        existing.setRentPerDay(updatedItem.getRentPerDay());
+        existing.setRentPerWeekMonth(updatedItem.getRentPerWeekMonth());
+        existing.setReplacementValue(updatedItem.getReplacementValue());
+        existing.setSecurityDeposit(updatedItem.getSecurityDeposit());
+
         return repository.save(existing);
     }
-
     public void deleteItem(Long id) {
         repository.deleteById(id);
     }
