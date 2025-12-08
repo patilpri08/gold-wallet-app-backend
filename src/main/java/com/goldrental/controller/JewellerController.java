@@ -24,11 +24,6 @@ public class JewellerController {
         return ResponseEntity.ok(jewellerService.getJewellerById(id));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Jeweller jeweller) {
-        return ResponseEntity.ok(jewellerService.registerJeweller(jeweller));
-    }
-
     @PostMapping("/{id}/verify")
     public ResponseEntity<?> verify(@PathVariable Long id) {
         return ResponseEntity.ok(jewellerService.verifyJeweller(id));

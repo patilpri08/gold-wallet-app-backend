@@ -1,11 +1,12 @@
 package com.goldrental.service;
 
 import com.goldrental.dto.InventoryRequest;
+import com.goldrental.dto.RegisterJweller;
 import com.goldrental.entity.Jeweller;
 
 public interface JewellerService {
 
-    Jeweller registerJeweller(Jeweller jeweller);
+    Jeweller registerJeweller(RegisterJweller jeweller);
 
     Jeweller verifyJeweller(Long id);
 

@@ -30,8 +30,11 @@ public class User {
     @Column(unique = true)
     private String phone;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "walletUser", cascade = CascadeType.ALL)
     private Wallet wallet;
+
+    @OneToOne(mappedBy = "jewellerUser", cascade = CascadeType.ALL)
+    private Jeweller jeweller;
 
     @Column(nullable = false)
     private String role; // e.g. "ROLE_CUSTOMER", "ROLE_ADMIN", "ROLE_JEWELLER"

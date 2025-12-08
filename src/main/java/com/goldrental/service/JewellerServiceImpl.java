@@ -1,12 +1,21 @@
 package com.goldrental.service;
 
 import com.goldrental.dto.InventoryRequest;
+import com.goldrental.dto.RegisterJweller;
 import com.goldrental.entity.Jeweller;
 import com.goldrental.entity.JewelleryItem;
+import com.goldrental.entity.User;
+import com.goldrental.entity.Wallet;
 import com.goldrental.repository.JewellerRepository;
 import com.goldrental.repository.JewelleryItemRepository;
+import com.goldrental.repository.UserRepository;
+import com.goldrental.repository.WalletRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -14,10 +23,50 @@ public class JewellerServiceImpl implements JewellerService {
 
     private final JewellerRepository jewellerRepository;
     private final JewelleryItemRepository jewelleryItemRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final WalletRepository walletRepository;
+    private final UserRepository userRepository;
+
 
     @Override
-    public Jeweller registerJeweller(Jeweller jeweller) {
+    @Transactional
+    public Jeweller registerJeweller(RegisterJweller registerJeweller) {
+        // Create User
+        User user = new User();
+        user.setName(registerJeweller.getBusinessName()); // or getName() depending on your DTO
+        user.setEmail(registerJeweller.getEmail());
+        user.setPhone(registerJeweller.getPhone());
+        user.setPassword(passwordEncoder.encode(registerJeweller.getPassword()));
+        user.setRole("JEWELLER");
+
+        userRepository.save(user);
+
+        // Create Wallet for the new User
+        Wallet wallet = new Wallet();
+        wallet.setWalletUser(user);
+        wallet.setBalance(BigDecimal.ZERO);
+        walletRepository.save(wallet);
+
+        // Create Jeweller entity
+        Jeweller jeweller = new Jeweller();
+        jeweller.setBusinessName(registerJeweller.getBusinessName());
+        jeweller.setOwnerName(registerJeweller.getOwnerName());
+        jeweller.setAddress(registerJeweller.getAddress());
+        jeweller.setPhone(registerJeweller.getPhone());
+        jeweller.setGstNumber(registerJeweller.getGstNumber());
+        jeweller.setStoreDocs(registerJeweller.getStoreDocs());
+        jeweller.setAccountNumber(registerJeweller.getAccountNumber());
+        jeweller.setIfscCode(registerJeweller.getIfscCode());
+        jeweller.setStaffEmail(registerJeweller.getStaffEmail());
+        jeweller.setKycType(registerJeweller.getKycType());
+        jeweller.setKycNumber(registerJeweller.getKycNumber());
+        jeweller.setStoreTimings(registerJeweller.getStoreTimings());
         jeweller.setVerified(false);
+
+        // Link User to Jeweller
+        jeweller.setJewellerUser(user);
+
+        // Save Jeweller (cascade will persist user if not already saved)
         return jewellerRepository.save(jeweller);
     }
 

@@ -33,9 +33,9 @@ public class RentalServiceImpl implements RentalService {
                 .findById(request.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
-        Wallet wallet = walletRepository.findByUser_Id(request.getCustomerId());
+        Wallet wallet = walletRepository.findByWalletUser_Id(request.getCustomerId());
         if (wallet == null) {
-            throw new RuntimeException("Wallet not found for user");
+            throw new RuntimeException("Wallet not found for walletUser");
         }
 
         BigDecimal rate = item.getDailyRentalRate() != null
@@ -56,7 +56,7 @@ public class RentalServiceImpl implements RentalService {
         walletRepository.save(wallet);
 
         Rental rental = new Rental();
-        rental.setUser_id(request.getCustomerId());   // ✅ link to user
+        rental.setUser_id(request.getCustomerId());   // ✅ link to walletUser
         rental.setId(item.getId());             // ✅ link to jewellery
         rental.setStartDate(start);
         rental.setEndDate(end);

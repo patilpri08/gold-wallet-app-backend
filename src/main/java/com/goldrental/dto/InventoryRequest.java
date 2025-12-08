@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Setter
 public class InventoryRequest {
 
-    private Long jewellerId;      // Which jeweller owns this item
+    private Long jewellerId;      // Which jewellerUser owns this item
     private String name;          // Jewellery name
     private String type;          // Ring, Necklace, Bracelet, etc.
     private BigDecimal price;     // Total value in INR

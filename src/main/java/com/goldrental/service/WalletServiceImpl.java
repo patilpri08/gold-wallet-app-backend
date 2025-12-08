@@ -19,9 +19,8 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public WalletDto getWallet(Long userId) {
-        System.out.println("+++++++++++++++++++++++++++++"+userId);
-        Wallet wallet = walletRepository.findByUser_Id(userId);
-        System.out.println("+++++++++++++++++++++++++++++"+wallet.getId());
+
+        Wallet wallet = walletRepository.findByWalletUser_Id(userId);
         if (wallet == null) {
             throw new ResourceNotFoundException("Wallet not found for userId: " + userId);
         }
@@ -31,7 +30,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public WalletDto addMoney(WalletRequest request) {
-        Wallet wallet = walletRepository.findByUser_Id(request.getUserId());
+        Wallet wallet = walletRepository.findByWalletUser_Id(request.getUserId());
         wallet.setBalance(wallet.getBalance().add(request.getAmount()));
         walletRepository.save(wallet);
         return mapToDto(wallet);
@@ -39,7 +38,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public WalletDto withdrawAmount(WalletRequest request) {
-        Wallet wallet = walletRepository.findByUser_Id(request.getUserId());
+        Wallet wallet = walletRepository.findByWalletUser_Id(request.getUserId());
 
         BigDecimal amount = request.getAmount();
 
@@ -59,7 +58,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     private WalletDto mapToDto(Wallet wallet) {
-        System.out.println("55=====");
+
         WalletDto dto = new WalletDto();
         dto.setUserId(wallet.getUserId());
         dto.setBalance(wallet.getBalance());

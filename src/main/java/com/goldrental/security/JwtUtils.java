@@ -33,7 +33,7 @@ public class JwtUtils {
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
-                .setSubject(user.getEmail()) // or user.getEmail()
+                .setSubject(user.getEmail()) // or walletUser.getEmail()
                 .claim("role", user.getRole()) // ✅ add role claim
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)

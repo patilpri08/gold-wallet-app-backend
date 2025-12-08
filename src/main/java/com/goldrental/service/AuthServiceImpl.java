@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new RuntimeException("Jeweller not found"));
         String token = jwtUtils.generateToken(user);
 
-        return new AuthResponse(user.getPhone(), user.getName(), user.getEmail(),token,user.getId());
+        return new AuthResponse(user.getPhone(), user.getName(), user.getEmail(),token,user.getId(), user.getRole());
     }
 
     @Override
@@ -49,13 +49,13 @@ public class AuthServiceImpl implements AuthService {
         savedUser.setEmail(request.getEmail());
         savedUser.setPhone(request.getPhone());
         savedUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        savedUser.setRole(request.getRole());
+        savedUser.setRole("CUSTOMER");
 
         userRepository.save(savedUser);
 
         // Create wallet for the new savedUser
         Wallet wallet = new Wallet();
-        wallet.setUser(savedUser);
+        wallet.setWalletUser(savedUser);
         wallet.setBalance(BigDecimal.ZERO); // start with 0 balance
         walletRepository.save(wallet);
 

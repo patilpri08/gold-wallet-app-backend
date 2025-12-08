@@ -19,7 +19,7 @@ public class JwtTokenProvider {
 
     // ✅ Decode Base64 secret into a proper SecretKey
     public JwtTokenProvider(@Value("${app.jwt.secret}") String secretKey) {
-        System.out.println("++++++++++++++++++++++++++++++++");
+
         byte[] keyBytes = Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded();
         String base64Key = Base64.getEncoder().encodeToString(keyBytes);
         System.out.println(base64Key);

@@ -18,7 +18,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
 
-        // This is called when user tries to access a secured REST resource without authentication
+        // This is called when walletUser tries to access a secured REST resource without authentication
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
     }
 }

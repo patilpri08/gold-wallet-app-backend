@@ -24,10 +24,9 @@ public class Wallet {
 
     @OneToOne
     @JoinColumn(name = "user_Id", referencedColumnName = "id")
-    private User user;
+    private User walletUser;
 
     public Long getUserId() {
-        System.out.println("++++++++++++++++++++++++++++"+user.getId());
-        return user.getId();
+         return walletUser.getId();
     }
 }
