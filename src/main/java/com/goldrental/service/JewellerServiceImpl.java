@@ -99,11 +99,11 @@ public class JewellerServiceImpl implements JewellerService {
         List<JewelleryItem> items = jewelleryItemRepository.findByJeweller_JewellerUser_Id(userId);
 
         if (items.isEmpty()) {
-            throw new EntityNotFoundException("No jewellery items found for user id: " + userId);
+            throw new EntityNotFoundException("No jewellery items found");
         }
 
         return items.stream()
-                .map(JewelleryInventoryResponse::new) // uses your constructor that accepts JewelleryItem
+                .map(JewelleryInventoryResponse::new)
                 .toList();
     }
 

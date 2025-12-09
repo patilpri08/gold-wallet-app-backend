@@ -1,5 +1,6 @@
 package com.goldrental.service;
 
+import com.goldrental.dto.JewelleryInventoryResponse;
 import com.goldrental.dto.JewelleryItemRequest;
 import com.goldrental.entity.JewelleryItem;
 import com.goldrental.repository.JewellerRepository;
@@ -22,8 +23,12 @@ public class JewelleryItemService {
         this.jewellerRepository = jewellerRepository;
     }
 
-    public List<JewelleryItem> getAllItems() {
-        return jewelleryItemRepository.findAll();
+    public List<JewelleryInventoryResponse> getAllItems() {
+        List<JewelleryItem> items = jewelleryItemRepository.findAll();
+
+        return items.stream()
+                .map(JewelleryInventoryResponse::new) // uses your DTO constructor
+                .toList();
     }
 
     public JewelleryItem getItemById(Long id) {
@@ -66,7 +71,7 @@ public class JewelleryItemService {
                     .orElseThrow(() -> new RuntimeException("Jeweller not found")));
 
             // 5. Set file path
-            item.setPhotos(savedFile.getAbsolutePath());
+            item.setPhotos(savedFile.getPath());
 
             // 6. Save entity
             JewelleryItem saved =  jewelleryItemRepository.save(item);

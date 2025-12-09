@@ -1,5 +1,6 @@
 package com.goldrental.controller;
 
+import com.goldrental.dto.JewelleryInventoryResponse;
 import com.goldrental.dto.JewelleryItemRequest;
 import com.goldrental.entity.JewelleryItem;
 import com.goldrental.service.JewelleryItemService;
@@ -21,7 +22,7 @@ public class JewelleryItemController {
     }
 
     @GetMapping
-    public List<JewelleryItem> getAllItems() {
+    public List<JewelleryInventoryResponse> getAllItems() {
         return service.getAllItems();
     }
 

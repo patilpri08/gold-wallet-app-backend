@@ -4,6 +4,7 @@ import com.goldrental.dto.JewelleryInventoryResponse;
 import com.goldrental.dto.JewelleryItemRequest;
 import com.goldrental.entity.JewelleryItem;
 import com.goldrental.service.JewellerService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +36,14 @@ public class JewellerController {
     }
 
     @GetMapping("/{id}/inventory")
-    public ResponseEntity<List<JewelleryInventoryResponse>> getInventory(@PathVariable Long id) {
-        return ResponseEntity.ok(jewellerService.getInventory(id));
+    public ResponseEntity<?> getInventory(@PathVariable Long id) {
+        try {
+            List<JewelleryInventoryResponse> items = jewellerService.getInventory(id);
+            return ResponseEntity.ok(items);
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ex.getMessage()); // "No jewelry items found for user id: 3"
+        }
     }
 
     @PostMapping("/{id}/inventory")
