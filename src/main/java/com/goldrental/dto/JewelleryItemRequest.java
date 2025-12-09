@@ -30,7 +30,7 @@ public class JewelleryItemRequest {
     private BigDecimal securityDeposit; // Security deposit
 
     private String status;              // AVAILABLE, RENTED, MAINTENANCE
-    private Boolean availability;       // true = available, false = not available
+    private String availability;       // true = available, false = not available
     private String condition;
     private String jeweller_id;// Condition description
 

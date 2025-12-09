@@ -1,5 +1,6 @@
 package com.goldrental.service;
 
+import com.goldrental.dto.JewelleryInventoryResponse;
 import com.goldrental.dto.JewelleryItemRequest;
 import com.goldrental.dto.RegisterJweller;
 import com.goldrental.entity.Jeweller;
@@ -10,12 +11,14 @@ import com.goldrental.repository.JewellerRepository;
 import com.goldrental.repository.JewelleryItemRepository;
 import com.goldrental.repository.UserRepository;
 import com.goldrental.repository.WalletRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -92,8 +95,16 @@ public class JewellerServiceImpl implements JewellerService {
     }
 
     @Override
-    public Object getInventory(Long id) {
-        return jewelleryItemRepository.findById(id);
+    public List<JewelleryInventoryResponse> getInventory(Long userId) {
+        List<JewelleryItem> items = jewelleryItemRepository.findByJeweller_JewellerUser_Id(userId);
+
+        if (items.isEmpty()) {
+            throw new EntityNotFoundException("No jewellery items found for user id: " + userId);
+        }
+
+        return items.stream()
+                .map(JewelleryInventoryResponse::new) // uses your constructor that accepts JewelleryItem
+                .toList();
     }
 
     @Override
@@ -104,10 +115,8 @@ public class JewellerServiceImpl implements JewellerService {
 
         JewelleryItem item = new JewelleryItem();
         item.setJeweller(jeweller);
-        item.setName(request.getName());
         item.setType(request.getType());
         item.setWeight(request.getWeight());
-        item.setDailyRentalRate(request.getDailyRentalRate());
 
         return jewelleryItemRepository.save(item);
     }
@@ -116,10 +125,8 @@ public class JewellerServiceImpl implements JewellerService {
     public Object updateInventoryItem(Long itemId, JewelleryItemRequest request) {
         JewelleryItem item = jewelleryItemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("Jeweller not found"));
 
-        item.setName(request.getName());
         item.setType(request.getType());
         item.setWeight(request.getWeight());
-        item.setDailyRentalRate(request.getDailyRentalRate());
 
         return jewelleryItemRepository.save(item);
     }

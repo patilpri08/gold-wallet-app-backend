@@ -38,8 +38,8 @@ public class RentalServiceImpl implements RentalService {
             throw new RuntimeException("Wallet not found for walletUser");
         }
 
-        BigDecimal rate = item.getDailyRentalRate() != null
-                ? item.getDailyRentalRate()
+        BigDecimal rate = item.getRentPerDay() != null
+                ? item.getRentPerDay()
                 : BigDecimal.ZERO;
 
         LocalDate start = request.getRentalStartDate();

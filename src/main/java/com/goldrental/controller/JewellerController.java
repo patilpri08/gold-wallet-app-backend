@@ -1,10 +1,15 @@
 package com.goldrental.controller;
 
+import com.goldrental.dto.JewelleryInventoryResponse;
 import com.goldrental.dto.JewelleryItemRequest;
+import com.goldrental.entity.JewelleryItem;
 import com.goldrental.service.JewellerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,9 +33,8 @@ public class JewellerController {
         return ResponseEntity.ok(jewellerService.verifyJeweller(id));
     }
 
-    // ---- Inventory ----
     @GetMapping("/{id}/inventory")
-    public ResponseEntity<?> getInventory(@PathVariable Long id) {
+    public ResponseEntity<List<JewelleryInventoryResponse>> getInventory(@PathVariable Long id) {
         return ResponseEntity.ok(jewellerService.getInventory(id));
     }
 

@@ -2,6 +2,7 @@ package com.goldrental.service;
 
 import com.goldrental.dto.JewelleryItemRequest;
 import com.goldrental.entity.JewelleryItem;
+import com.goldrental.repository.JewellerRepository;
 import com.goldrental.repository.JewelleryItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +15,11 @@ import java.util.List;
 public class JewelleryItemService {
 
     private final JewelleryItemRepository jewelleryItemRepository;
+    private final JewellerRepository jewellerRepository;
 
-    public JewelleryItemService(JewelleryItemRepository jewelleryItemRepository) {
+    public JewelleryItemService(JewelleryItemRepository jewelleryItemRepository, JewellerRepository jewellerRepository) {
         this.jewelleryItemRepository = jewelleryItemRepository;
+        this.jewellerRepository = jewellerRepository;
     }
 
     public List<JewelleryItem> getAllItems() {
@@ -28,6 +31,7 @@ public class JewelleryItemService {
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
     }
 
+
     public JewelleryItem createItem(JewelleryItemRequest request, MultipartFile file) {
         try {
             // 1. Ensure upload directory exists
@@ -38,50 +42,46 @@ public class JewelleryItemService {
             }
 
             // 2. Save file to disk
-            String fileName = System.currentTimeMillis() + "_" +  file.getOriginalFilename();
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             File savedFile = new File(uploadDir + fileName);
             file.transferTo(savedFile);
 
             // 3. Map DTO to Entity
             JewelleryItem item = new JewelleryItem();
-            item.setName(request.getName());
             item.setType(request.getType());
             item.setJewelleryCategory(request.getJewelleryCategory());
             item.setPrice(request.getPrice());
             item.setWeight(request.getWeight());
             item.setPurity(request.getPurity());
             item.setRentPerDay(request.getDailyRent());
-            item.setDailyRentalRate(request.getDailyRentalRate());
             item.setRentPerDay(request.getRentPerDay());
             item.setRentPerWeekMonth(request.getRentPerWeekMonth());
             item.setReplacementValue(request.getReplacementValue());
             item.setSecurityDeposit(request.getSecurityDeposit());
             item.setAvailability(request.getAvailability());
             item.setJewellery_condition(request.getCondition());
+            // 4. Set jeweller relationship
+            Long jewellerId = Long.valueOf(request.getJeweller_id());
+            System.out.println(jewellerId);
+            item.setJeweller(jewellerRepository.findByJewellerUser_Id(jewellerId)
+                    .orElseThrow(() -> new RuntimeException("Jeweller not found")));
 
-            // 4. Set file path in entity
+            // 5. Set file path
             item.setPhotos(savedFile.getAbsolutePath());
 
-            // 5. Save entity
+            // 6. Save entity
             return jewelleryItemRepository.save(item);
 
         } catch (IOException e) {
-            System.err.println("File upload failed: " + e.getMessage());
             throw new RuntimeException("File upload failed", e);
-        } catch (Exception e) {
-            System.err.println("Error creating jewellery item: " + e.getMessage());
-            throw new RuntimeException("Error creating jewellery item", e);
         }
     }
 
     public JewelleryItem updateItem(Long id, JewelleryItem updatedItem) {
         JewelleryItem existing = getItemById(id);
 
-        // Basic fields
-        existing.setName(updatedItem.getName());
         existing.setType(updatedItem.getType());
         existing.setPrice(updatedItem.getPrice());
-        existing.setDailyRentalRate(updatedItem.getDailyRentalRate());
         existing.setWeight(updatedItem.getWeight());
 
         // Relationship

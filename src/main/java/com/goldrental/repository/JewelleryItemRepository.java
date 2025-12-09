@@ -1,6 +1,7 @@
 package com.goldrental.repository;
 
 import com.goldrental.entity.JewelleryItem;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +16,5 @@ public interface JewelleryItemRepository extends JpaRepository<JewelleryItem, Lo
 
     // If you expect only one item per Jeweller:
     Optional<JewelleryItem> findFirstByJeweller_Id(Long jewellerId);
+    List<JewelleryItem> findByJeweller_JewellerUser_Id(Long userId);
 }
