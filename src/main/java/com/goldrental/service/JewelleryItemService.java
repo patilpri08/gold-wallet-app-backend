@@ -32,7 +32,7 @@ public class JewelleryItemService {
     }
 
 
-    public JewelleryItem createItem(JewelleryItemRequest request, MultipartFile file) {
+    public Boolean createItem(JewelleryItemRequest request, MultipartFile file) {
         try {
             // 1. Ensure upload directory exists
             String uploadDir = "c:/uploads/";
@@ -45,7 +45,6 @@ public class JewelleryItemService {
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             File savedFile = new File(uploadDir + fileName);
             file.transferTo(savedFile);
-
             // 3. Map DTO to Entity
             JewelleryItem item = new JewelleryItem();
             item.setType(request.getType());
@@ -59,7 +58,7 @@ public class JewelleryItemService {
             item.setReplacementValue(request.getReplacementValue());
             item.setSecurityDeposit(request.getSecurityDeposit());
             item.setAvailability(request.getAvailability());
-            item.setJewellery_condition(request.getCondition());
+            item.setJewellery_condition(request.getJewellery_condition());
             // 4. Set jeweller relationship
             Long jewellerId = Long.valueOf(request.getJeweller_id());
             System.out.println(jewellerId);
@@ -70,7 +69,9 @@ public class JewelleryItemService {
             item.setPhotos(savedFile.getAbsolutePath());
 
             // 6. Save entity
-            return jewelleryItemRepository.save(item);
+            JewelleryItem saved =  jewelleryItemRepository.save(item);
+
+            return saved.getId() != null;
 
         } catch (IOException e) {
             throw new RuntimeException("File upload failed", e);

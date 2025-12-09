@@ -5,6 +5,7 @@ import com.goldrental.dto.JewelleryItemRequest;
 import com.goldrental.entity.JewelleryItem;
 import com.goldrental.service.JewellerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,8 +40,15 @@ public class JewellerController {
     }
 
     @PostMapping("/{id}/inventory")
-    public ResponseEntity<?> addItem(@PathVariable Long id, @RequestBody JewelleryItemRequest request) {
-        return ResponseEntity.ok(jewellerService.addInventoryItem(id, request));
+    public ResponseEntity<String> addInventoryItem(@PathVariable Long id,
+                                                   @RequestBody JewelleryItemRequest request) {
+        boolean success = jewellerService.addInventoryItem(id, request);
+        if (success) {
+            return ResponseEntity.ok("Jewellery item saved successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to save jewellery item");
+        }
     }
 
     @PutMapping("/inventory/{itemId}")

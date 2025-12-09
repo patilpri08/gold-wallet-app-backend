@@ -18,7 +18,8 @@ public class JewelleryInventoryResponse {
     private BigDecimal securityDeposit;
     private String availability;
     private BigDecimal replacementValue;
-    private String condition;
+    private String jewellery_condition;
+    private String photos;
 
     // --- Default constructor ---
     public JewelleryInventoryResponse() {}
@@ -26,7 +27,7 @@ public class JewelleryInventoryResponse {
     // --- All-args constructor ---
     public JewelleryInventoryResponse(String category, Double weight, String purity,
                                       BigDecimal dailyRental, BigDecimal weeklyMonthlyRent, BigDecimal securityDeposit,
-                                      String availability, BigDecimal replacementValue, String condition) {
+                                      String availability, BigDecimal replacementValue, String jewellery_condition) {
 
         this.category = category;
         this.weight = weight;
@@ -36,7 +37,7 @@ public class JewelleryInventoryResponse {
         this.securityDeposit = securityDeposit;
         this.availability = availability;
         this.replacementValue = replacementValue;
-        this.condition = condition;
+        this.jewellery_condition = jewellery_condition;
     }
 
     // --- Entity-mapping constructor ---
@@ -50,7 +51,8 @@ public class JewelleryInventoryResponse {
         this.securityDeposit = item.getSecurityDeposit();
         this.availability = item.getAvailability();
         this.replacementValue = item.getReplacementValue();
-        this.condition = item.getJewellery_condition();
+        this.jewellery_condition = item.getJewellery_condition();
+        this.photos = item.getPhotos();
     }
 
     // --- Getters & Setters ---

@@ -3,6 +3,7 @@ package com.goldrental.controller;
 import com.goldrental.dto.JewelleryItemRequest;
 import com.goldrental.entity.JewelleryItem;
 import com.goldrental.service.JewelleryItemService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,12 +31,18 @@ public class JewelleryItemController {
     }
 
     @PostMapping
-    public ResponseEntity<JewelleryItem> createItem(
+    public ResponseEntity<String> createItem(
             @RequestPart("item") JewelleryItemRequest item,
             @RequestPart("file") MultipartFile file) {
-        JewelleryItem savedItem = service.createItem(item, file);
-        return ResponseEntity.ok(savedItem);
+        boolean success  = service.createItem(item, file);
+        if (success) {
+            return ResponseEntity.ok("Jewellery item saved successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to save jewellery item");
+        }
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<JewelleryItem> updateItem(@PathVariable Long id, @RequestBody JewelleryItem item) {
         return ResponseEntity.ok(service.updateItem(id, item));

@@ -31,7 +31,7 @@ public class JewelleryItemRequest {
 
     private String status;              // AVAILABLE, RENTED, MAINTENANCE
     private String availability;       // true = available, false = not available
-    private String condition;
+    private String jewellery_condition;
     private String jeweller_id;// Condition description
 
 }

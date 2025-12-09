@@ -108,17 +108,19 @@ public class JewellerServiceImpl implements JewellerService {
     }
 
     @Override
-    public Object addInventoryItem(Long id, JewelleryItemRequest request) {
+    public Boolean addInventoryItem(Long id, JewelleryItemRequest request) {
         Jeweller jeweller = jewellerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Jeweller not found"));
-
 
         JewelleryItem item = new JewelleryItem();
         item.setJeweller(jeweller);
         item.setType(request.getType());
         item.setWeight(request.getWeight());
 
-        return jewelleryItemRepository.save(item);
+        JewelleryItem saved = jewelleryItemRepository.save(item);
+
+        return saved.getId() != null;
+
     }
 
     @Override
