@@ -2,16 +2,18 @@ package com.goldrental.controller;
 
 import com.goldrental.dto.JewelleryInventoryResponse;
 import com.goldrental.dto.JewelleryItemRequest;
-import com.goldrental.entity.JewelleryItem;
 import com.goldrental.service.JewellerService;
+import com.goldrental.service.JewelleryItemService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class JewellerController {
 
     private final JewellerService jewellerService;
+    private final JewelleryItemService jewelleryItemService;
 
     @GetMapping
     public ResponseEntity<?> getAll() {
@@ -68,4 +71,23 @@ public class JewellerController {
         jewellerService.deleteInventoryItem(itemId);
         return ResponseEntity.ok("Item removed");
     }
+
+    @PostMapping
+    public ResponseEntity<Map<String, String>> createItem(
+            @RequestPart("item") JewelleryItemRequest item,
+            @RequestPart("file") MultipartFile file) {
+
+        boolean success = jewelleryItemService.createItem(item, file);
+
+        Map<String, String> response = new HashMap<>();
+        if (success) {
+            response.put("message", "Jewellery item saved successfully");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Failed to save jewellery item");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+
 }

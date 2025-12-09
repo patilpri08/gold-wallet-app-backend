@@ -21,7 +21,6 @@ public class JewelleryItem {
     private Jeweller jeweller;
 
     private String type;                // Ring, Necklace, Bracelet, etc.
-    private BigDecimal price;           // Total value in INR
     private double weight;              // Weight in grams
     private String jewellery_condition;
 

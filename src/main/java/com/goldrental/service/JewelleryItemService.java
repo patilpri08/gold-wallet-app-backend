@@ -54,7 +54,6 @@ public class JewelleryItemService {
             JewelleryItem item = new JewelleryItem();
             item.setType(request.getType());
             item.setJewelleryCategory(request.getJewelleryCategory());
-            item.setPrice(request.getPrice());
             item.setWeight(request.getWeight());
             item.setPurity(request.getPurity());
             item.setRentPerDay(request.getDailyRent());
@@ -71,7 +70,7 @@ public class JewelleryItemService {
                     .orElseThrow(() -> new RuntimeException("Jeweller not found")));
 
             // 5. Set file path
-            item.setPhotos(savedFile.getPath());
+            item.setPhotos(fileName);
 
             // 6. Save entity
             JewelleryItem saved =  jewelleryItemRepository.save(item);
@@ -86,8 +85,6 @@ public class JewelleryItemService {
     public JewelleryItem updateItem(Long id, JewelleryItem updatedItem) {
         JewelleryItem existing = getItemById(id);
 
-        existing.setType(updatedItem.getType());
-        existing.setPrice(updatedItem.getPrice());
         existing.setWeight(updatedItem.getWeight());
 
         // Relationship

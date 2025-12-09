@@ -17,7 +17,6 @@ public class JewelleryItemRequest {
     private String type;                // Ring, Necklace, Bracelet, etc.
     private String jewelleryCategory;   // Category field (e.g., rings, necklaces)
 
-    private BigDecimal price;           // Total value in INR
     private Double weight;              // Weight in grams
     private String purity;              // e.g. "24k", "22k"
 
