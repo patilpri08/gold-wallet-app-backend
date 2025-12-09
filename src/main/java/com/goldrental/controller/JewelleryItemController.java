@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/jewellery-items")
@@ -32,15 +34,19 @@ public class JewelleryItemController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createItem(
+    public ResponseEntity<Map<String, String>> createItem(
             @RequestPart("item") JewelleryItemRequest item,
             @RequestPart("file") MultipartFile file) {
-        boolean success  = service.createItem(item, file);
+
+        boolean success = service.createItem(item, file);
+
+        Map<String, String> response = new HashMap<>();
         if (success) {
-            return ResponseEntity.ok("Jewellery item saved successfully");
+            response.put("message", "Jewellery item saved successfully");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to save jewellery item");
+            response.put("message", "Failed to save jewellery item");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
