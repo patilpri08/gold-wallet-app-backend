@@ -26,7 +26,4 @@ public class Wallet {
     @JoinColumn(name = "user_Id", referencedColumnName = "id")
     private User walletUser;
 
-    public Long getUserId() {
-         return walletUser.getId();
-    }
 }

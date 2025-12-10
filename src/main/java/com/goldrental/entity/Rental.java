@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rentals")
@@ -15,30 +16,20 @@ public class Rental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;   // ✅ primary key only
+    private Long id;   // primary key
 
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // explicit FK column
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "jewellery_id", nullable = false) // ✅ not "id"
-    private JewelleryItem jewellery;
+    @OneToOne
+    @JoinColumn(name = "jewellery_id")
+    private JewelleryItem jewelleryItem;
 
-    private Long jewellerId;
     private LocalDate startDate;
     private LocalDate endDate;
     private String rentalStatus;
     private BigDecimal totalRent;
+    private LocalDateTime createdDate;
 
-    public Long getJewelleryId() {
-        return jewellery.getId();
-    }
-
-    public void setUser_id(Long customerId) {
-        this.user.setId(customerId);
-    }
-
-    public Long getUser_id() {
-        return user.getId();
-    }
 }

@@ -2,18 +2,15 @@ package com.goldrental.service;
 
 import com.goldrental.dto.RentalDto;
 import com.goldrental.dto.RentalRequest;
-import com.goldrental.entity.JewelleryItem;
-import com.goldrental.entity.Rental;
-import com.goldrental.entity.Wallet;
+import com.goldrental.entity.*;
 import com.goldrental.exception.JewelleryNotFoundException;
-import com.goldrental.repository.JewelleryItemRepository;
-import com.goldrental.repository.RentalRepository;
-import com.goldrental.repository.WalletRepository;
+import com.goldrental.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,44 +22,47 @@ public class RentalServiceImpl implements RentalService {
     private final JewelleryItemRepository jewelleryItemRepository;
     private final RentalRepository rentalRepository;
     private final WalletRepository walletRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Boolean rentJewellery(RentalRequest request) {
 
-        JewelleryItem item = jewelleryItemRepository
+        JewelleryItem jewelleryItem = jewelleryItemRepository
                 .findById(request.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
+
+        if (jewelleryItem.getAvailability().equals("RENTED")) {
+            throw new RuntimeException("Wallet not found for walletUser");
+        }
 
         Wallet wallet = walletRepository.findByWalletUser_Id(request.getUserId());
         if (wallet == null) {
             throw new RuntimeException("Wallet not found for walletUser");
         }
 
-        BigDecimal rate = item.getRentPerDay() != null
-                ? item.getRentPerDay()
-                : BigDecimal.ZERO;
-
-        LocalDate start = request.getRentalStartDate();
-        LocalDate end = request.getRentalEndDate();
-
-        long diffDays = ChronoUnit.DAYS.between(start, end);
-        BigDecimal rentalAmount = rate.multiply(BigDecimal.valueOf(diffDays));
-
-        if (wallet.getBalance().compareTo(rentalAmount) < 0) {
+        if (wallet.getBalance().compareTo(request.getRentalAmount()) < 0) {
             throw new RuntimeException("Insufficient wallet balance");
         }
 
-        wallet.setBalance(wallet.getBalance().subtract(rentalAmount));
+        wallet.setBalance(wallet.getBalance().subtract(request.getRentalAmount()));
         walletRepository.save(wallet);
 
-        Rental rental = new Rental();
-        rental.setUser_id(request.getUserId());   // ✅ link to walletUser
-        rental.setId(item.getId());               // ✅ link to jewellery
-        rental.setStartDate(start);
-        rental.setEndDate(end);
-        rental.setTotalRent(rentalAmount);
-        rental.setRentalStatus("ACTIVE");
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        Rental rental = new Rental();
+        // ✅ link to walletUser
+        // ✅ link to jewellery
+        jewelleryItem.setAvailability(request.getRentalStatus());
+        rental.setJewelleryItem(jewelleryItem);
+        rental.setStartDate(request.getRentalStartDate());
+        rental.setEndDate(request.getRentalEndDate());
+        rental.setTotalRent(request.getRentalAmount());
+        rental.setRentalStatus(request.getRentalStatus());
+//        rental.setUser(user);
+        // ✅ set current timestamp
+        rental.setCreatedDate(LocalDateTime.now());
+        rental.setUser(user);
         rentalRepository.save(rental);
 
         // ✅ Return boolean instead of DTO
@@ -71,40 +71,46 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public RentalDto returnJewellery(Long rentalId) {
-        Rental rental = rentalRepository.findById(rentalId)
+/*        Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new RuntimeException("Rental Id not found"));
 
         rental.setRentalStatus("RETURNED");
         rentalRepository.save(rental);
 
-        JewelleryItem item = jewelleryItemRepository
-                .findById(rental.getJewelleryId())
-                .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
+//        JewelleryItem item = jewelleryItemRepository
+//                .findById(rental.getJewelleryId())
+//                .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
-        return mapToDto(rental, item);
+        return mapToDto(rental, item);*/
+        return null;
     }
 
     @Override
-    public List<RentalDto> getUserRentals(Long user_id) {
-        return rentalRepository.findByUser_Id(user_id)
+    public List<RentalDto> getUserRentals(Long userId) {
+        return rentalRepository.findByUser_Id(userId)
                 .stream()
-                .map(r -> mapToDto(
-                        r,
-                        jewelleryItemRepository.findById(r.getJewelleryId())
-                                .orElseThrow(() -> new JewelleryNotFoundException(r.getJewelleryId()))
-                ))
+                .map(r -> {
+                    Long jewelleryId = r.getJewelleryItem() != null ? r.getJewelleryItem().getId() : null;
+                    assert jewelleryId != null;
+                    JewelleryItem jewelleryItem = jewelleryItemRepository.findById(jewelleryId)
+                            .orElseThrow(() -> new JewelleryNotFoundException(jewelleryId));
+                    return mapToDto(r, jewelleryItem);
+                })
                 .collect(Collectors.toList());
     }
 
     private RentalDto mapToDto(Rental rental, JewelleryItem item) {
         RentalDto dto = new RentalDto();
         dto.setId(rental.getId());
-        dto.setUser_id(rental.getUser_id());          // ✅ correct userId
-        dto.setJewelleryId(rental.getJewelleryId());
+        dto.setUser_id(rental.getUser().getId());          // ✅ correct userId
+        dto.setJewelleryId(rental.getJewelleryItem().getId());
         dto.setStartDate(rental.getStartDate());
         dto.setEndDate(rental.getEndDate());
-        dto.setRentalStatus(rental.getTotalRent());
-        dto.setTotalRent(rental.getRentalStatus());
+
+        // ✅ Correct mapping
+        dto.setRentalStatus(rental.getRentalStatus());   // status field
+        dto.setTotalRent(rental.getTotalRent());         // rent amount
+
         return dto;
     }
 }

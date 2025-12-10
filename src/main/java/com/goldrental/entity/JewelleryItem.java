@@ -16,6 +16,9 @@ public class JewelleryItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(mappedBy = "jewelleryItem")
+    private Rental rental;
+
     @ManyToOne
     @JoinColumn(name = "jeweller_id", nullable = false)
     private Jeweller jeweller;

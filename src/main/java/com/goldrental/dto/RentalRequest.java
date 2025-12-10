@@ -12,11 +12,10 @@ import java.time.temporal.ChronoUnit;
 public class RentalRequest {
 
     private Long userId;
-    private Long jewellerId;
     private Long jewelleryId;      // Jewellery item to rent
     private LocalDate rentalStartDate;
     private LocalDate rentalEndDate;
-    private BigDecimal rentalStatus;
+    private String rentalStatus;
     private BigDecimal rentalAmount;
 
     public RentalRequest() {}

@@ -2,12 +2,15 @@ package com.goldrental.service;
 
 import java.math.BigDecimal;
 
+import com.goldrental.entity.User;
 import com.goldrental.exception.ResourceNotFoundException;
+import com.goldrental.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import com.goldrental.dto.WalletRequest;
 import com.goldrental.repository.WalletRepository;
 import com.goldrental.entity.Wallet;
 import com.goldrental.dto.WalletDto;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
 
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
+    private final UserRepository userRepository;
 
     @Override
     public WalletDto getWallet(Long userId) {
@@ -46,6 +50,9 @@ public class WalletServiceImpl implements WalletService {
             throw new RuntimeException("Insufficient balance");
         }
 
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("Jeweller not found"));
+        wallet.setWalletUser(user);
         wallet.setBalance(wallet.getBalance().subtract(amount));
         walletRepository.save(wallet);
 
@@ -60,7 +67,7 @@ public class WalletServiceImpl implements WalletService {
     private WalletDto mapToDto(Wallet wallet) {
 
         WalletDto dto = new WalletDto();
-        dto.setUserId(wallet.getUserId());
+        dto.setUserId(wallet.getWalletUser().getId());
         dto.setBalance(wallet.getBalance());
         return dto;
     }
