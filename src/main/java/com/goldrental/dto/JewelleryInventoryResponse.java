@@ -20,6 +20,8 @@ public class JewelleryInventoryResponse {
     private BigDecimal replacementValue;
     private String jewellery_condition;
     private String photos;
+    private Long jeweller_id;
+    private Long jewellery_id;
 
     // --- Default constructor ---
     public JewelleryInventoryResponse() {}
@@ -53,6 +55,8 @@ public class JewelleryInventoryResponse {
         this.replacementValue = item.getReplacementValue();
         this.jewellery_condition = item.getJewellery_condition();
         this.photos = item.getPhotos();
+        this.jeweller_id = item.getJeweller().getId();
+        this.jewellery_id = item.getId();
     }
 
     // --- Getters & Setters ---
