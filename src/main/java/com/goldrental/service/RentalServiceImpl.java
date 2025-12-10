@@ -27,13 +27,13 @@ public class RentalServiceImpl implements RentalService {
     private final WalletRepository walletRepository;
 
     @Override
-    public RentalDto rentJewellery(RentalRequest request) {
+    public Boolean rentJewellery(RentalRequest request) {
 
         JewelleryItem item = jewelleryItemRepository
                 .findById(request.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
-        Wallet wallet = walletRepository.findByWalletUser_Id(request.getCustomerId());
+        Wallet wallet = walletRepository.findByWalletUser_Id(request.getUserId());
         if (wallet == null) {
             throw new RuntimeException("Wallet not found for walletUser");
         }
@@ -56,8 +56,8 @@ public class RentalServiceImpl implements RentalService {
         walletRepository.save(wallet);
 
         Rental rental = new Rental();
-        rental.setUser_id(request.getCustomerId());   // ✅ link to walletUser
-        rental.setId(item.getId());             // ✅ link to jewellery
+        rental.setUser_id(request.getUserId());   // ✅ link to walletUser
+        rental.setId(item.getId());               // ✅ link to jewellery
         rental.setStartDate(start);
         rental.setEndDate(end);
         rental.setTotalRent(rentalAmount);
@@ -65,7 +65,8 @@ public class RentalServiceImpl implements RentalService {
 
         rentalRepository.save(rental);
 
-        return mapToDto(rental, item);
+        // ✅ Return boolean instead of DTO
+        return true;
     }
 
     @Override

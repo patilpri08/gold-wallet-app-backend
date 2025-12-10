@@ -3,6 +3,7 @@ package com.goldrental.controller;
 import com.goldrental.dto.RentalRequest;
 import com.goldrental.service.RentalService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +15,15 @@ public class RentalController {
     private final RentalService rentalService;
 
     @PostMapping("/book")
-    public ResponseEntity<?> rentJewellery(@RequestBody RentalRequest request) {
-        return ResponseEntity.ok(rentalService.rentJewellery(request));
+    public ResponseEntity<String> rentJewellery(@RequestBody RentalRequest request) {
+        boolean booked = rentalService.rentJewellery(request);
+
+        if (booked) {
+            return ResponseEntity.ok("Jewellery booked successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Jewellery could not be booked");
+        }
     }
 
     @PostMapping("/return/{rentalId}")

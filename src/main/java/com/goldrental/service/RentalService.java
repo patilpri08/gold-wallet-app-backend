@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface RentalService {
 
-    RentalDto rentJewellery(RentalRequest request);
+    Boolean rentJewellery(RentalRequest request);
 
     RentalDto returnJewellery(Long rentalId);
 
