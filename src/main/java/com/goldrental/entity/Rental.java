@@ -31,5 +31,8 @@ public class Rental {
     private String rentalStatus;
     private BigDecimal totalRent;
     private LocalDateTime createdDate;
+    @Column(name = "security_blocked", precision = 19, scale = 2)
+    private BigDecimal securityBlocked;
+
 
 }

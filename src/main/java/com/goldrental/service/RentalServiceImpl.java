@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +48,8 @@ public class RentalServiceImpl implements RentalService {
             throw new RuntimeException("Insufficient wallet balance");
         }
 
+
+
         wallet.setBalance(wallet.getBalance().subtract(request.getRentalAmount()));
         walletRepository.save(wallet);
 
@@ -57,6 +60,9 @@ public class RentalServiceImpl implements RentalService {
         if(!rental.getUser().getId().equals(request.getUserId())){
             throw new RuntimeException("Item is already rented by you");
         }
+        BigDecimal deposit = jewelleryItem.getSecurityDeposit();
+        rental.setSecurityBlocked(deposit); // record PaymentTransaction type BLOCK for deposit
+
         // ✅ link to walletUser
         // ✅ link to jewellery
         jewelleryItem.setAvailability(request.getRentalStatus());
@@ -169,7 +175,12 @@ public class RentalServiceImpl implements RentalService {
         if (calculateDuesRemaining(rental) != null && calculateDuesRemaining(rental).compareTo(BigDecimal.ZERO) > 0) {
             throw new RuntimeException("Cannot cancel rental. Outstanding dues remain: " + calculateDuesRemaining(rental));
         }
+        BigDecimal blocked = Optional.ofNullable(rental.getSecurityBlocked()).orElse(BigDecimal.ZERO);
+        BigDecimal dues = calculateDuesRemaining(rental);
+        BigDecimal deducted = dues.min(blocked);
+        rental.setSecurityBlocked(blocked.subtract(deducted));
 
+// record transactions for CHARGE_FROM_BLOCK and REFUND as needed
         // Update availability back to AVAILABLE
         jewelleryItem.setAvailability("AVAILABLE");
         jewelleryItemRepository.save(jewelleryItem);

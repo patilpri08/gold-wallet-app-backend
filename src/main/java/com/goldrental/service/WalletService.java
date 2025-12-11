@@ -1,15 +1,20 @@
 package com.goldrental.service;
 
+import com.goldrental.dto.TransactionDto;
 import com.goldrental.dto.WalletDto;
 import com.goldrental.dto.WalletRequest;
+import com.goldrental.dto.WalletResponse;
+
+import java.util.List;
+import java.util.Map;
 
 public interface WalletService {
 
-    WalletDto getWallet(Long userId);
+    WalletResponse getSummary(Long userId);
 
-    WalletDto addMoney(WalletRequest request);
+    Map<String, Object> addMoney(WalletRequest request);
 
-    WalletDto withdrawAmount(WalletRequest request);
+    Map<String, Object> withdrawAmount(WalletRequest request);
 
-    Object getTransactions(Long userId);
+    List<TransactionDto> getTransactions(Long userIdm, String filter);
 }
