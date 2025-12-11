@@ -11,7 +11,9 @@ import com.goldrental.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,8 +34,7 @@ public class RentalServiceImpl implements RentalService {
                 .findById(request.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
-        if ("RENTED".equalsIgnoreCase(jewelleryItem.getAvailability())
-                && !jewelleryItem.getId().equals(request)) {
+        if ("RENTED".equalsIgnoreCase(jewelleryItem.getAvailability())){
             throw new RuntimeException("Item is already rented by another user");
         }
 
@@ -53,16 +54,18 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Rental rental = new Rental();
+        if(!rental.getUser().getId().equals(request.getUserId())){
+            throw new RuntimeException("Item is already rented by you");
+        }
         // ✅ link to walletUser
         // ✅ link to jewellery
         jewelleryItem.setAvailability(request.getRentalStatus());
+        jewelleryItem.setJewelleryItemUser(user);
         rental.setJewelleryItem(jewelleryItem);
         rental.setStartDate(request.getRentalStartDate());
         rental.setEndDate(request.getRentalEndDate());
         rental.setTotalRent(request.getRentalAmount());
         rental.setRentalStatus(request.getRentalStatus());
-//        rental.setUser(user);
-        // ✅ set current timestamp
         rental.setCreatedDate(LocalDateTime.now());
         rental.setUser(user);
         rentalRepository.save(rental);
@@ -149,5 +152,47 @@ public class RentalServiceImpl implements RentalService {
         }
 
         return false; // already confirmed, no change
+    }
+
+    public Boolean cancelRental(Long rentalId, Long requestingUserId) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new RentalNotFoundException(rentalId));
+
+        JewelleryItem jewelleryItem = rental.getJewelleryItem();
+
+        // Ensure only the user who rented it can cancel
+        if (!rental.getUser().getId().equals(requestingUserId)) {
+            throw new RuntimeException("You cannot cancel a rental you did not make");
+        }
+
+        // ✅ Check for dues remaining before allowing cancellation
+        if (calculateDuesRemaining(rental) != null && calculateDuesRemaining(rental).compareTo(BigDecimal.ZERO) > 0) {
+            throw new RuntimeException("Cannot cancel rental. Outstanding dues remain: " + calculateDuesRemaining(rental));
+        }
+
+        // Update availability back to AVAILABLE
+        jewelleryItem.setAvailability("AVAILABLE");
+        jewelleryItemRepository.save(jewelleryItem);
+
+        // Mark rental as cancelled (instead of deleting)
+        rental.setRentalStatus("CANCELLED");
+        rentalRepository.save(rental);
+
+        return true;
+    }
+
+    public BigDecimal calculateDuesRemaining(Rental rental) {
+        long days = ChronoUnit.DAYS.between(rental.getStartDate(), rental.getEndDate());
+
+        BigDecimal baseCost = rental.getJewelleryItem().getRentPerDay()
+                .multiply(BigDecimal.valueOf(days));
+
+//        BigDecimal totalCost = baseCost.add(
+//                rental.getPenalties() != null ? rental.getPenalties() : BigDecimal.ZERO
+//        );
+//
+//        BigDecimal payments = rental.getPaymentsMade() != null ? rental.getPaymentsMade() : BigDecimal.ZERO;
+
+        return baseCost.max(BigDecimal.ZERO); // never negative
     }
 }

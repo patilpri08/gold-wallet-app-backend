@@ -15,4 +15,6 @@ public interface RentalService {
     List<RentalResponse> getUserRentals(Long user_id);
 
     Boolean confirmRental(Long id);
+
+    Boolean cancelRental(Long id, Long userId);
 }

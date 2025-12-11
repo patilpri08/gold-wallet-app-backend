@@ -60,4 +60,15 @@ public class RentalController {
         return ResponseEntity.ok(confirmedRental);
     }
 
+    // Cancel rental endpoint
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<Boolean> cancelRental(
+            @PathVariable Long id,
+            @RequestParam Long userId) {
+
+        Boolean result = rentalService.cancelRental(id, userId);
+        return ResponseEntity.ok(result);
+    }
+
+
 }

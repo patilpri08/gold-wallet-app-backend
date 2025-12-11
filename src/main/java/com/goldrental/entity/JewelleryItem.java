@@ -25,7 +25,7 @@ public class JewelleryItem {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private JewelleryItem jewelleryItemUser;
+    private User jewelleryItemUser;
 
     private double weight;              // Weight in grams
     private String jewellery_condition;
