@@ -21,5 +21,5 @@ public interface RentalRepository extends JpaRepository<Rental, Long> {
      * Adjust the field name to match your Rental entity (securityBlocked / securityDeposit).
      */
     @Query("SELECT COALESCE(SUM(r.securityBlocked), 0) FROM Rental r WHERE r.user.id = :userId AND r.rentalStatus = 'ACTIVE'")
-    int sumBlockedForActiveRentalsByUserId(@Param("userId") Long userId);
+    BigDecimal sumBlockedForActiveRentalsByUserId(@Param("userId") Long userId);
 }

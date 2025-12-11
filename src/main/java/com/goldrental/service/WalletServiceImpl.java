@@ -31,14 +31,14 @@ public class WalletServiceImpl implements WalletService {
     private final RentalRepository rentalRepo;
 
     @Override
-//    @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public WalletResponse getSummary(Long userId) {
         try {
-            int walletBalance = Optional.ofNullable(txnRepo.sumBalanceByUserId(userId)).orElse(0);
-            int blocked = Optional.ofNullable(rentalRepo.sumBlockedForActiveRentalsByUserId(userId)).orElse(0);
-            int available = walletBalance - blocked;
-            if (available < 0) {
-                available = 0;
+            BigDecimal walletBalance = Optional.ofNullable(txnRepo.sumBalanceByUserId(userId)).orElse(BigDecimal.ZERO);
+            BigDecimal blocked = Optional.ofNullable(rentalRepo.sumBlockedForActiveRentalsByUserId(userId)).orElse(BigDecimal.ZERO);
+            BigDecimal available = walletBalance.subtract(blocked);
+            if (available.compareTo(BigDecimal.ZERO) < 0) {
+                available = BigDecimal.ZERO;
             }
             WalletResponse walletResponse = new WalletResponse();
             walletResponse.setAvailable(available);
@@ -48,7 +48,7 @@ public class WalletServiceImpl implements WalletService {
             return walletResponse;
         }catch(Exception e){
             e.printStackTrace();
-            return new WalletResponse(0,0,0);
+            return new WalletResponse(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         }
     }
 

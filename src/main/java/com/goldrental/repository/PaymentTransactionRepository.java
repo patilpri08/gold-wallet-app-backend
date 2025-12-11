@@ -18,7 +18,7 @@ public interface PaymentTransactionRepository extends CrudRepository<PaymentTran
      * Positive amounts are credits, negative are debits.
      */
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM PaymentTransaction t WHERE t.jewelleryItemUser.id = :userId")
-    int sumBalanceByUserId(@Param("userId") Long userId);
+    BigDecimal sumBalanceByUserId(@Param("userId") Long userId);
 
 
     @Query("SELECT new com.goldrental.dto.TransactionDto(t.txnId, t.txnDate, t.type, t.jewelleryName, t.duration, t.amount, t.mode) " +
