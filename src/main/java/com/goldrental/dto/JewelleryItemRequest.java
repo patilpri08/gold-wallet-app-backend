@@ -14,7 +14,6 @@ public class JewelleryItemRequest {
     private String jewellerId;          // Foreign key to Jeweller
 
     private String name;                // Name of the jewellery item
-    private String type;                // Ring, Necklace, Bracelet, etc.
     private String jewelleryCategory;   // Category field (e.g., rings, necklaces)
 
     private Double weight;              // Weight in grams

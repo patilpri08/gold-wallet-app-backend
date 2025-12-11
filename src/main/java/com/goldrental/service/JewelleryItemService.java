@@ -52,7 +52,6 @@ public class JewelleryItemService {
             file.transferTo(savedFile);
             // 3. Map DTO to Entity
             JewelleryItem item = new JewelleryItem();
-            item.setType(request.getType());
             item.setJewelleryCategory(request.getJewelleryCategory());
             item.setWeight(request.getWeight());
             item.setPurity(request.getPurity());

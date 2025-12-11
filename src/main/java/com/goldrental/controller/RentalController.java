@@ -2,6 +2,7 @@ package com.goldrental.controller;
 
 import com.goldrental.dto.RentalDto;
 import com.goldrental.dto.RentalRequest;
+import com.goldrental.dto.RentalResponse;
 import com.goldrental.service.RentalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,14 @@ public class RentalController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<RentalDto>> userRentals(@PathVariable Long userId) {
+    public ResponseEntity<List<RentalResponse>> userRentals(@PathVariable Long userId) {
         return ResponseEntity.ok(rentalService.getUserRentals(userId));
     }
+    // Confirm rental by ID
+    @PutMapping("/{id}/confirm")
+    public ResponseEntity<Boolean> confirmRental(@PathVariable Long id) {
+        Boolean confirmedRental = rentalService.confirmRental(id);
+        return ResponseEntity.ok(confirmedRental);
+    }
+
 }

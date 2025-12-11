@@ -23,7 +23,10 @@ public class JewelleryItem {
     @JoinColumn(name = "jeweller_id", nullable = false)
     private Jeweller jeweller;
 
-    private String type;                // Ring, Necklace, Bracelet, etc.
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private JewelleryItem jewelleryItemUser;
+
     private double weight;              // Weight in grams
     private String jewellery_condition;
 
@@ -38,5 +41,4 @@ public class JewelleryItem {
     private BigDecimal securityDeposit; // Security deposit
 
     public JewelleryItem() {}
-
 }

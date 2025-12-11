@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Setter
 public class JewelleryInventoryResponse {
 
-    private String category;
+    private String jewelleryCategory;
     private Double weight;
     private String purity;
     private BigDecimal dailyRental;
@@ -31,7 +31,7 @@ public class JewelleryInventoryResponse {
                                       BigDecimal dailyRental, BigDecimal weeklyMonthlyRent, BigDecimal securityDeposit,
                                       String availability, BigDecimal replacementValue, String jewellery_condition) {
 
-        this.category = category;
+        this.jewelleryCategory = category;
         this.weight = weight;
         this.purity = purity;
         this.dailyRental = dailyRental;
@@ -45,7 +45,7 @@ public class JewelleryInventoryResponse {
     // --- Entity-mapping constructor ---
     public JewelleryInventoryResponse(JewelleryItem item) {
 
-        this.category = item.getJewelleryCategory();
+        this.jewelleryCategory = item.getJewelleryCategory();
         this.weight = item.getWeight();
         this.purity = item.getPurity();
         this.dailyRental = item.getRentPerDay();

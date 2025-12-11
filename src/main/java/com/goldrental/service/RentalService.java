@@ -2,6 +2,7 @@ package com.goldrental.service;
 
 import com.goldrental.dto.RentalRequest;
 import com.goldrental.dto.RentalDto;
+import com.goldrental.dto.RentalResponse;
 
 import java.util.List;
 
@@ -11,5 +12,7 @@ public interface RentalService {
 
     RentalDto returnJewellery(Long rentalId);
 
-    List<RentalDto> getUserRentals(Long user_id);
+    List<RentalResponse> getUserRentals(Long user_id);
+
+    Boolean confirmRental(Long id);
 }

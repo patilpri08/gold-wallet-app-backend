@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/jewellers/**")
                         .hasAnyRole("JEWELLER", "ADMIN")
                         .requestMatchers("/api/wallet/**", "/api/rental/**")
-                        .hasAnyRole("CUSTOMER", "ADMIN")
+                        .hasAnyRole("CUSTOMER", "ADMIN", "JEWELLER")
                         .requestMatchers("/api/jewellery-items/**").permitAll()
                         .anyRequest().authenticated()
                 )

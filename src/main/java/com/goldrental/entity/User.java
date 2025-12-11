@@ -38,5 +38,11 @@ public class User {
 
     @Column(nullable = false)
     private String role; // e.g. "ROLE_CUSTOMER", "ROLE_ADMIN", "ROLE_JEWELLER"
+    @ManyToOne
+
+    @OneToMany(mappedBy = "jewelleryItemUser")
+    private List<JewelleryItem> jewelleryItems; // items linked to this user (if applicable)
+
+
 
 }

@@ -114,7 +114,6 @@ public class JewellerServiceImpl implements JewellerService {
 
         JewelleryItem item = new JewelleryItem();
         item.setJeweller(jeweller);
-        item.setType(request.getType());
         item.setWeight(request.getWeight());
 
         JewelleryItem saved = jewelleryItemRepository.save(item);
@@ -127,7 +126,6 @@ public class JewellerServiceImpl implements JewellerService {
     public Object updateInventoryItem(Long itemId, JewelleryItemRequest request) {
         JewelleryItem item = jewelleryItemRepository.findById(itemId).orElseThrow(() -> new RuntimeException("Jeweller not found"));
 
-        item.setType(request.getType());
         item.setWeight(request.getWeight());
 
         return jewelleryItemRepository.save(item);
