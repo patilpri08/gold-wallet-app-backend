@@ -1,7 +1,6 @@
 package com.goldrental.service;
 
-import com.goldrental.dto.TransactionDto;
-import com.goldrental.dto.WalletDto;
+import com.goldrental.dto.TransactionResponse;
 import com.goldrental.dto.WalletRequest;
 import com.goldrental.dto.WalletResponse;
 
@@ -16,5 +15,5 @@ public interface WalletService {
 
     Map<String, Object> withdrawAmount(WalletRequest request);
 
-    List<TransactionDto> getTransactions(Long userIdm, String filter);
+    List<TransactionResponse> getTransactions(Long userIdm, String filter);
 }

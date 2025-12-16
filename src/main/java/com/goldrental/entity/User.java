@@ -42,4 +42,7 @@ public class User {
     @OneToMany(mappedBy = "jewelleryItemUser", cascade = CascadeType.ALL)
     private List<JewelleryItem> jewelleryItems; // items linked to this user (if applicable)
 
+    @OneToMany(mappedBy = "paymentTransactionUser", cascade = CascadeType.ALL)
+    private List<PaymentTransaction> paymentTransaction; // items linked to this user (if applicable)
+
 }

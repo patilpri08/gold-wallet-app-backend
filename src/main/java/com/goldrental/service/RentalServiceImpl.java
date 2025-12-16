@@ -8,6 +8,7 @@ import com.goldrental.exception.JewelleryNotFoundException;
 import com.goldrental.exception.RentalNotFoundException;
 import com.goldrental.exception.UserNotFoundException;
 import com.goldrental.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class RentalServiceImpl implements RentalService {
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
 
-    @Override
+    @Transactional
     public Boolean rentJewellery(RentalRequest request) {
 
         JewelleryItem jewelleryItem = jewelleryItemRepository
@@ -57,7 +58,17 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Rental rental = new Rental();
-        if(!rental.getUser().getId().equals(request.getUserId())){
+
+        List<Rental> rentals = rentalRepository.findByUser_Id(request.getUserId());
+
+        boolean hasActiveRental = rentals.stream()
+                .anyMatch(r -> r.getRentalStatus().equals("ACTIVE"));
+
+        if (hasActiveRental) {
+            throw new RuntimeException("Item is already rented by you");
+        }
+
+        if (rental.getUser() != null && rental.getUser().getId().equals(request.getUserId())) {
             throw new RuntimeException("Item is already rented by you");
         }
         BigDecimal deposit = jewelleryItem.getSecurityDeposit();
@@ -114,7 +125,7 @@ public class RentalServiceImpl implements RentalService {
 
         } else if ("JEWELLER".equalsIgnoreCase(user.getRole())) {
             // Jeweller: rentals of items owned by this jeweller
-            List<String> availabilityList = Arrays.asList("REQUESTED", "RENTED", "COMPLETED");
+            List<String> availabilityList = Arrays.asList("REQUESTED", "RENTED", "COMPLETED", "CONFIRMED");
 
             return jewelleryItemRepository.findByJewellerIdAndAvailabilityIn(user.getJeweller().getId(), availabilityList)
                     .stream()
