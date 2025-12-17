@@ -56,7 +56,6 @@ public class JewelleryItemService {
             item.setWeight(request.getWeight());
             item.setPurity(request.getPurity());
             item.setRentPerDay(request.getDailyRent());
-            item.setRentPerDay(request.getRentPerDay());
             item.setRentPerWeekMonth(request.getRentPerWeekMonth());
             item.setReplacementValue(request.getReplacementValue());
             item.setSecurityDeposit(request.getSecurityDeposit());

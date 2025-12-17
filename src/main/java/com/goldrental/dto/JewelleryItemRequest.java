@@ -21,7 +21,6 @@ public class JewelleryItemRequest {
 
     private BigDecimal dailyRent;       // Daily rent (if separate from rate)
     private BigDecimal dailyRentalRate; // Daily rental charge
-    private BigDecimal rentPerDay;      // Explicit daily rent
     private BigDecimal rentPerWeekMonth;// Weekly/Monthly rent
 
     private BigDecimal replacementValue;// Replacement cost
