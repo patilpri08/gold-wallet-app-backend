@@ -40,7 +40,7 @@ public class User {
     private String role; // e.g. "ROLE_CUSTOMER", "ROLE_ADMIN", "ROLE_JEWELLER"
 
     @OneToMany(mappedBy = "jewelleryItemUser", cascade = CascadeType.ALL)
-    private List<JewelleryItem> jewelleryItems; // items linked to this user (if applicable)
+    private List<JewelleryInventory> jewelleryInventories; // items linked to this user (if applicable)
 
     @OneToMany(mappedBy = "paymentTransactionUser", cascade = CascadeType.ALL)
     private List<PaymentTransaction> paymentTransaction; // items linked to this user (if applicable)

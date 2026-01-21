@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RentalServiceImpl implements RentalService {
 
-    private final JewelleryItemRepository jewelleryItemRepository;
+    private final JewelleryInventoryRepository jewelleryItemRepository;
     private final RentalRepository rentalRepository;
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
@@ -32,11 +32,11 @@ public class RentalServiceImpl implements RentalService {
     @Transactional
     public Boolean rentJewellery(RentalRequest request) {
 
-        JewelleryItem jewelleryItem = jewelleryItemRepository
+        JewelleryInventory jewelleryInventory = jewelleryItemRepository
                 .findById(request.getJewelleryId())
                 .orElseThrow(() -> new RuntimeException("Jewellery item not found"));
 
-        if ("RENTED".equalsIgnoreCase(jewelleryItem.getAvailability())){
+        if ("RENTED".equalsIgnoreCase(jewelleryInventory.getListingStatus())){
             throw new RuntimeException("Item is already rented by another user");
         }
 
@@ -71,14 +71,14 @@ public class RentalServiceImpl implements RentalService {
         if (rental.getUser() != null && rental.getUser().getId().equals(request.getUserId())) {
             throw new RuntimeException("Item is already rented by you");
         }
-        BigDecimal deposit = jewelleryItem.getSecurityDeposit();
+        BigDecimal deposit = jewelleryInventory.getBlockAmount();
         rental.setSecurityBlocked(deposit); // record PaymentTransaction type BLOCK for deposit
 
         // ✅ link to walletUser
         // ✅ link to jewellery
-        jewelleryItem.setAvailability(request.getRentalStatus());
-        jewelleryItem.setJewelleryItemUser(user);
-        rental.setJewelleryItem(jewelleryItem);
+        jewelleryInventory.setListingStatus(request.getRentalStatus());
+        jewelleryInventory.setJewelleryItemUser(user);
+        rental.setJewelleryItem(jewelleryInventory);
         rental.setStartDate(request.getRentalStartDate());
         rental.setEndDate(request.getRentalEndDate());
         rental.setTotalRent(request.getRentalAmount());
@@ -117,9 +117,9 @@ public class RentalServiceImpl implements RentalService {
             return rentalRepository.findByUser_Id(userId)
                     .stream()
                     .map(r -> {
-                        JewelleryItem jewelleryItem = jewelleryItemRepository.findById(r.getJewelleryItem().getId())
+                        JewelleryInventory jewelleryInventory = jewelleryItemRepository.findById(r.getJewelleryItem().getId())
                                 .orElseThrow(() -> new JewelleryNotFoundException(r.getJewelleryItem().getId()));
-                        return mapToDto(jewelleryItem,userId);
+                        return mapToDto(jewelleryInventory,userId);
                     })
                     .collect(Collectors.toList());
 
@@ -127,7 +127,7 @@ public class RentalServiceImpl implements RentalService {
             // Jeweller: rentals of items owned by this jeweller
             List<String> availabilityList = Arrays.asList("REQUESTED", "RENTED", "COMPLETED", "CONFIRMED");
 
-            return jewelleryItemRepository.findByJewellerIdAndAvailabilityIn(user.getJeweller().getId(), availabilityList)
+            return jewelleryItemRepository.findByJewellerIdAndListingStatusIn(user.getJeweller().getId(), availabilityList)
                     .stream()
                     .filter(item -> item.getRental() != null) // ✅ check rentals exist
                     .map(item1 -> mapToDto(item1, userId))
@@ -138,7 +138,7 @@ public class RentalServiceImpl implements RentalService {
         }
     }
 
-    private RentalResponse mapToDto(JewelleryItem item, Long userId) {
+    private RentalResponse mapToDto(JewelleryInventory item, Long userId) {
         //System.out.println("====================="+item.getId());
         RentalResponse rentalResponse = new RentalResponse();
         rentalResponse.setId(item.getRental().getId());       // ✅ correct userId
@@ -146,9 +146,9 @@ public class RentalServiceImpl implements RentalService {
         rentalResponse.setStartDate(item.getRental().getStartDate());
         rentalResponse.setEndDate(item.getRental().getEndDate());;
         rentalResponse.setJewellerName(item.getJeweller().getBusinessName());
-        rentalResponse.setJewelleryCategory(item.getJewelleryCategory());
+        rentalResponse.setJewelleryCategory(item.getCategory());
         // ✅ Correct mapping
-        rentalResponse.setRentalStatus(item.getAvailability());   // status field
+        rentalResponse.setRentalStatus(item.getListingStatus());   // status field
         rentalResponse.setTotalRent(item.getRental().getTotalRent());         // rent amount
         rentalResponse.setUserId(userId);
         return rentalResponse;
@@ -158,10 +158,10 @@ public class RentalServiceImpl implements RentalService {
         Rental rental = rentalRepository.findById(id)
                 .orElseThrow(() -> new RentalNotFoundException(id));
 
-        JewelleryItem item = rental.getJewelleryItem();
+        JewelleryInventory item = rental.getJewelleryItem();
 
-        if (!"CONFIRMED".equalsIgnoreCase(item.getAvailability())) {
-            item.setAvailability("CONFIRMED");
+        if (!"CONFIRMED".equalsIgnoreCase(item.getListingStatus())) {
+            item.setListingStatus("CONFIRMED");
             rental.setRentalStatus("CONFIRMED");
             jewelleryItemRepository.save(item);
             rentalRepository.save(rental);
@@ -175,7 +175,7 @@ public class RentalServiceImpl implements RentalService {
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new RentalNotFoundException(rentalId));
 
-        JewelleryItem jewelleryItem = rental.getJewelleryItem();
+        JewelleryInventory jewelleryInventory = rental.getJewelleryItem();
 
         // Ensure only the user who rented it can cancel
         if (!rental.getUser().getId().equals(requestingUserId)) {
@@ -193,8 +193,8 @@ public class RentalServiceImpl implements RentalService {
 
 // record transactions for CHARGE_FROM_BLOCK and REFUND as needed
         // Update availability back to AVAILABLE
-        jewelleryItem.setAvailability("AVAILABLE");
-        jewelleryItemRepository.save(jewelleryItem);
+        jewelleryInventory.setListingStatus("AVAILABLE");
+        jewelleryItemRepository.save(jewelleryInventory);
 
         // Mark rental as cancelled (instead of deleting)
         rental.setRentalStatus("CANCELLED");
@@ -206,15 +206,20 @@ public class RentalServiceImpl implements RentalService {
     public BigDecimal calculateDuesRemaining(Rental rental) {
         long days = ChronoUnit.DAYS.between(rental.getStartDate(), rental.getEndDate());
 
-        BigDecimal baseCost = rental.getJewelleryItem().getRentPerDay()
-                .multiply(BigDecimal.valueOf(days));
+        // Use blockAmount or a dedicated dailyRentalRate field
+        BigDecimal dailyRate = rental.getJewelleryItem().getBlockAmount() != null
+                ? rental.getJewelleryItem().getBlockAmount()
+                : BigDecimal.ZERO;
 
-//        BigDecimal totalCost = baseCost.add(
-//                rental.getPenalties() != null ? rental.getPenalties() : BigDecimal.ZERO
-//        );
-//
-//        BigDecimal payments = rental.getPaymentsMade() != null ? rental.getPaymentsMade() : BigDecimal.ZERO;
+        BigDecimal baseCost = dailyRate.multiply(BigDecimal.valueOf(days));
 
-        return baseCost.max(BigDecimal.ZERO); // never negative
+        BigDecimal penalties = rental.getPenalties() != null ? rental.getPenalties() : BigDecimal.ZERO;
+        BigDecimal payments = rental.getPaymentsMade() != null ? rental.getPaymentsMade() : BigDecimal.ZERO;
+
+        BigDecimal totalCost = baseCost.add(penalties);
+        BigDecimal duesRemaining = totalCost.subtract(payments);
+
+        return duesRemaining.max(BigDecimal.ZERO); // never negative
     }
+
 }

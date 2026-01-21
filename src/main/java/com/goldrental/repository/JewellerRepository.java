@@ -11,5 +11,4 @@ public interface JewellerRepository extends JpaRepository<Jeweller, Long> {
 
     // find jeweller by linked user id
     Optional<Jeweller> findByJewellerUser_Id(Long userId);
-
 }

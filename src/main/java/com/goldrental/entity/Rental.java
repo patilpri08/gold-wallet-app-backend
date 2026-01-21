@@ -24,7 +24,7 @@ public class Rental {
 
     @OneToOne
     @JoinColumn(name = "jewellery_id")
-    private JewelleryItem jewelleryItem;
+    private JewelleryInventory jewelleryItem;
 
     private LocalDate startDate;
     private LocalDate endDate;
@@ -33,6 +33,10 @@ public class Rental {
     private LocalDateTime createdDate;
     @Column(name = "security_blocked", precision = 19, scale = 2)
     private BigDecimal securityBlocked;
+
+
+    private BigDecimal penalties = BigDecimal.ZERO;
+    private BigDecimal paymentsMade = BigDecimal.ZERO;
 
 
 }
