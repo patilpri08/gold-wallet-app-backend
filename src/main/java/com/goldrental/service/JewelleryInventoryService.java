@@ -76,6 +76,7 @@ public class JewelleryInventoryService {
             item.setTypes(request.getTypes());
             item.setValuationAmount(request.getValuationAmount());
             item.setValuationDate(request.getValuationDate());
+            item.setDailyRental(request.getDailyRental());
 
             // 4. Set jeweller relationship
             Long jewellerId = request.getJewellerId();
@@ -117,7 +118,7 @@ public class JewelleryInventoryService {
         existing.setTypes(updatedItem.getTypes());
         existing.setValuationAmount(updatedItem.getValuationAmount());
         existing.setValuationDate(updatedItem.getValuationDate());
-
+        existing.setDailyRental(updatedItem.getDailyRental());
         // Relationship
         existing.setJeweller(updatedItem.getJeweller());
         existing.setJewelleryItemUser(updatedItem.getJewelleryItemUser());

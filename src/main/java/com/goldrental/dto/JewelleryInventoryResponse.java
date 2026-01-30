@@ -43,6 +43,7 @@ public class JewelleryInventoryResponse {
     private LocalDate availableFrom;
 
     private String frontViewUrl;
+    private BigDecimal dailyRental;
 
     // --- Default constructor ---
     public JewelleryInventoryResponse() {}
@@ -80,5 +81,6 @@ public class JewelleryInventoryResponse {
         this.availableFrom = item.getAvailableFrom();
 
         this.frontViewUrl = item.getFrontViewUrl();
+        this.dailyRental = item.getDailyRental() != null ? item.getDailyRental() : null;
     }
 }

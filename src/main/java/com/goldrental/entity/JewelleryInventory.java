@@ -78,6 +78,7 @@ public class JewelleryInventory {
 
     private LocalDate updatedAt = LocalDate.now();
 
+    private BigDecimal dailyRental;
 
     public JewelleryInventory() {}
 

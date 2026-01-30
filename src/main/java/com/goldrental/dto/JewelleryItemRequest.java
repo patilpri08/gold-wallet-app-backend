@@ -41,4 +41,5 @@ public class JewelleryItemRequest {
     private LocalDate availableFrom;      // Available from date
 
     private String frontViewUrl;          // Path/URL to front view image
+    private BigDecimal dailyRental;
 }
